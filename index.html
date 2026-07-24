@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito Sans', sans-serif; background: #F4F6FB; color: #0F2044; min-height: 100vh; }
+h1,h2,h3 { font-family: 'Nunito', sans-serif; }
+
+/* ══ WELCOME ══ */
+#welcome { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #E8EEF8, #FEF6DC); padding: 20px; }
+.card { background: #fff; border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 420px; box-shadow: 0 8px 32px rgba(27,58,107,.15); text-align: center; }
+.card h1 { font-size: 28px; color: #1B3A6B; margin-bottom: 6px; font-weight: 900; }
+.card p { font-size: 14px; color: #5A6A8A; margin-bottom: 24px; }
+label { display: block; font-size: 11px; font-weight: 800; color: #5A6A8A; text-transform: uppercase; letter-spacing: .06em; text-align: left; margin-bottom: 5px; font-family: 'Nunito', sans-serif; }
+input, select { width: 100%; padding: 12px 16px; border: 2px solid #D0D9EE; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; color: #0F2044; background: #fff; margin-bottom: 14px; outline: none; appearance: none; text-align: center; }
+input:focus, select:focus { border-color: #1B3A6B; }
+.lang-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.lang-btn { flex: 1; padding: 10px 6px; border: 2px solid #D0D9EE; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer; background: #F4F6FB; color: #5A6A8A; transition: all .2s; text-align: center; line-height: 1.4; }
+.lang-btn.on { border-color: #1B3A6B; background: #E8EEF8; color: #1B3A6B; }
+.go { width: 100%; padding: 14px; background: linear-gradient(135deg,#1B3A6B,#C89B1C); color: #fff; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 900; cursor: pointer; margin-top: 4px; }
+.go:hover { opacity: .9; }
+
+/* ══ MAIN APP ══ */
+#app { display: none; max-width: 880px; margin: 0 auto; padding: 0; }
+
+/* NAV */
+.nav { background: #1B3A6B; padding: 0 20px; display: flex; align-items: center; height: 54px; }
+.logo { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 19px; color: #fff; display: flex; align-items: center; gap: 7px; }
+.logo-dot { width: 8px; height: 8px; border-radius: 50%; background: #C89B1C; }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.lock-btn { background: none; border: none; cursor: pointer; font-size: 17px; opacity: .5; color: #fff; padding: 4px; }
+.lock-btn:hover { opacity: 1; }
+.logout-btn { display: none; padding: 6px 12px; background: rgba(255,255,255,.15); color: #fff; border: 1.5px solid rgba(255,255,255,.3); border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 11px; cursor: pointer; }
+.ntab { padding: 6px 13px; border-radius: 50px; border: none; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; background: transparent; color: rgba(255,255,255,.65); }
+.ntab.active { background: #C89B1C; color: #fff; }
+.nbadge { background: #C0392B; color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 50px; margin-left: 3px; }
+
+.page { display: none; padding: 18px 20px; }
+.page.active { display: block; }
+
+.banner { background: linear-gradient(135deg,#0F2044,#1B3A6B 60%,#C89B1C); border-radius: 16px; padding: 18px 22px; color: #fff; margin-bottom: 16px; }
+.banner h2 { font-size: 19px; margin-bottom: 3px; }
+.banner p { font-size: 12px; opacity: .85; }
+.bchips { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.bchip { background: rgba(255,255,255,.2); border-radius: 50px; padding: 3px 10px; font-weight: 700; font-size: 11px; }
+
+.sec { font-size: 15px; font-weight: 800; margin-bottom: 10px; color: #1B3A6B; display: flex; align-items: center; gap: 6px; }
+
+.level-row { display: flex; align-items: center; gap: 8px; background: #fff; border: 2px solid #D0D9EE; border-radius: 50px; padding: 7px 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.level-row label { margin: 0; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 12px; color: #5A6A8A; white-space: nowrap; }
+.level-sel { flex: 1; border: none; background: transparent; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; color: #1B3A6B; cursor: pointer; outline: none; min-width: 120px; }
+.change-btn { font-size: 11px; font-weight: 700; color: #5A6A8A; background: none; border: none; cursor: pointer; opacity: .6; }
+
+/* MODE ACCORDION CARDS */
+.mode-card { background: #fff; border-radius: 14px; border: 2px solid #D0D9EE; overflow: hidden; margin-bottom: 10px; }
+.mode-header { display: flex; align-items: center; gap: 10px; padding: 13px 16px; cursor: pointer; }
+.mode-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.mode-title { font-size: 14px; font-weight: 800; color: #1B3A6B; }
+.mode-sub { font-size: 11px; color: #5A6A8A; margin-top: 1px; }
+.mode-arrow { margin-left: auto; font-size: 17px; color: #5A6A8A; transition: transform .25s; }
+.mode-card.open .mode-arrow { transform: rotate(90deg); }
+.mode-body { display: none; padding: 0 16px 16px; }
+.mode-card.open .mode-body { display: block; }
+
+.topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.tc { font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 50px; cursor: pointer; border: 2px solid #D0D9EE; background: #F4F6FB; color: #5A6A8A; transition: all .2s; }
+.tc.active { background: #1B3A6B; color: #fff; border-color: #1B3A6B; }
+.tc:hover:not(.active) { border-color: #1B3A6B; color: #1B3A6B; }
+
+.custom-row { display: flex; gap: 6px; margin-top: 4px; }
+.custom-inp { flex: 1; padding: 9px 13px; border: 2px solid #D0D9EE; border-radius: 50px; font-size: 13px; outline: none; background: #fff; }
+.custom-inp:focus { border-color: #1B3A6B; }
+
+.side-row { display: flex; gap: 7px; margin-bottom: 10px; }
+.side-btn { flex: 1; padding: 8px; border: 2px solid #D0D9EE; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; cursor: pointer; background: #F4F6FB; color: #0F2044; text-align: center; }
+.side-btn.active { background: #1B3A6B; color: #fff; border-color: #1B3A6B; }
+
+.start-btn { width: 100%; padding: 12px; background: linear-gradient(135deg,#1B3A6B,#C89B1C); color: #fff; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 900; cursor: pointer; margin-top: 8px; }
+.start-btn:hover { opacity: .9; }
+
+/* PRONUNCIATION */
+.ptabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.ptab { flex: 1; padding: 9px; border: 2px solid #D0D9EE; border-radius: 8px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; cursor: pointer; background: #F4F6FB; color: #5A6A8A; text-align: center; }
+.ptab.active { background: #1B3A6B; color: #fff; border-color: #1B3A6B; }
+.ptab-content { display: none; }
+.ptab-content.active { display: block; }
+.pronun-card { background: #F4F6FB; border-radius: 12px; padding: 16px; margin-bottom: 10px; }
+.pronun-word { font-size: 30px; font-weight: 900; color: #1B3A6B; text-align: center; margin: 12px 0; }
+.pronun-phonetic { font-size: 14px; color: #5A6A8A; text-align: center; margin-bottom: 4px; font-style: italic; }
+.pronun-translation { font-size: 13px; color: #C89B1C; font-weight: 700; text-align: center; margin-bottom: 16px; }
+.pronun-btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+.pbtn { padding: 9px 16px; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; cursor: pointer; }
+.pbtn-listen { background: #1B3A6B; color: #fff; }
+.pbtn-record { background: #C89B1C; color: #fff; }
+.pbtn-record.recording { background: #C0392B; }
+.pbtn-next { background: #fff; color: #1B3A6B; border: 2px solid #D0D9EE; }
+.pronun-score-bar { height: 10px; background: #D0D9EE; border-radius: 50px; overflow: hidden; margin: 6px 0; }
+.pronun-score-fill { height: 100%; border-radius: 50px; transition: width .8s; }
+.pronun-fb { background: #E8EEF8; border-radius: 10px; padding: 10px 12px; margin-top: 8px; display: none; }
+.pronun-fb.show { display: block; }
+.pronun-tip { font-size: 12px; color: #0F2044; margin-top: 4px; }
+
+.lookup-row { display: flex; gap: 6px; margin-bottom: 12px; }
+.lookup-inp { flex: 1; padding: 11px 16px; border: 2px solid #D0D9EE; border-radius: 50px; font-size: 15px; font-weight: 700; outline: none; }
+.lookup-btn { padding: 11px 18px; background: #1B3A6B; color: #fff; border: none; border-radius: 50px; font-weight: 800; font-size: 13px; cursor: pointer; }
+.lookup-result { background: #F4F6FB; border-radius: 12px; padding: 16px; text-align: center; display: none; }
+.lookup-result.show { display: block; }
+.lookup-word-big { font-size: 32px; font-weight: 900; color: #1B3A6B; margin-bottom: 10px; }
+.speed-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+.speed-btn { padding: 7px 14px; border: 2px solid #D0D9EE; border-radius: 50px; font-weight: 700; font-size: 12px; cursor: pointer; background: #fff; color: #5A6A8A; }
+.speed-btn.active { background: #1B3A6B; color: #fff; border-color: #1B3A6B; }
+
+/* CHAT */
+.toprow { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.back { background: none; border: 2px solid #D0D9EE; border-radius: 50px; padding: 6px 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; cursor: pointer; color: #5A6A8A; }
+.endbtn { padding: 7px 16px; background: #FDECEA; color: #C0392B; border: 2px solid #C0392B; border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 11px; cursor: pointer; margin-left: auto; }
+.conv-hdr { background: #fff; border: 2px solid #D0D9EE; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.av { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,#1B3A6B,#C89B1C); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.conv-info h3 { font-size: 13px; color: #1B3A6B; }
+.conv-info p { font-size: 11px; color: #5A6A8A; }
+.badges { margin-left: auto; display: flex; gap: 5px; flex-wrap: wrap; }
+.badge { background: #E8EEF8; color: #1B3A6B; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 50px; }
+.badge.gold { background: #FEF6DC; color: #C89B1C; }
+.chatbox { background: #fff; border: 2px solid #D0D9EE; border-radius: 12px; min-height: 280px; max-height: 340px; overflow-y: auto; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+.msg { display: flex; gap: 7px; max-width: 84%; }
+.msg.ai { align-self: flex-start; }
+.msg.me { align-self: flex-end; flex-direction: row-reverse; }
+.bubble { padding: 9px 13px; border-radius: 13px; font-size: 13px; line-height: 1.5; }
+.msg.ai .bubble { background: #E8EEF8; border-bottom-left-radius: 3px; }
+.msg.me .bubble { background: #1B3A6B; color: #fff; border-bottom-right-radius: 3px; }
+.mav { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.msg.ai .mav { background: linear-gradient(135deg,#1B3A6B,#C89B1C); }
+.msg.me .mav { background: #FEF6DC; }
+.replay { background: none; border: none; cursor: pointer; font-size: 10px; opacity: .4; display: block; padding: 2px 0 0; }
+.note-bubble { align-self: flex-start; max-width: 84%; margin-left: 35px; background: #FEF6DC; border: 1.5px dashed #F5C842; border-radius: 10px; padding: 6px 11px; font-size: 11px; font-weight: 700; color: #B8860B; font-style: italic; }
+.dots { display: flex; gap: 4px; align-items: center; padding: 8px 12px; background: #E8EEF8; border-radius: 12px; width: fit-content; }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: #4A72B0; animation: bn .9s infinite; }
+.dot:nth-child(2){animation-delay:.15s} .dot:nth-child(3){animation-delay:.3s}
+@keyframes bn{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+.inrow { display: flex; gap: 7px; align-items: center; }
+.tin { flex: 1; padding: 11px 15px; border: 2px solid #D0D9EE; border-radius: 50px; font-size: 14px; font-weight: 700; color: #0F2044; outline: none; background: #fff; }
+.tin:focus { border-color: #1B3A6B; }
+.sbtn { width: 40px; height: 40px; border-radius: 50%; background: #1B3A6B; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sbtn svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mbtn { width: 44px; height: 44px; border-radius: 50%; background: #C89B1C; border: none; cursor: pointer; font-size: 18px; flex-shrink: 0; position: relative; }
+.mbtn.rec { background: #C0392B; }
+.mbtn.rec::after { content:''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid #C0392B; animation: mr 1s ease-out infinite; }
+@keyframes mr{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.5);opacity:0}}
+.hint { font-size: 10px; color: #5A6A8A; text-align: center; margin-top: 4px; }
+.hint.rec { color: #C0392B; font-weight: 700; }
+.notice { display: none; background: #FEF6DC; border: 2px solid #F5C842; border-radius: 10px; padding: 7px 11px; font-size: 11px; color: #C89B1C; margin-top: 6px; }
+
+.fb { background: #fff; border: 2px solid #E8EEF8; border-radius: 12px; padding: 16px; margin-top: 12px; display: none; }
+.fb h3 { font-size: 14px; color: #1B3A6B; margin-bottom: 10px; }
+.fb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.fbi { background: #F4F6FB; border-radius: 9px; padding: 9px; }
+.fbi label { font-size: 9px; font-weight: 800; color: #5A6A8A; text-transform: uppercase; letter-spacing: .04em; display: block; margin-bottom: 3px; }
+.sbar { height: 5px; background: #D0D9EE; border-radius: 50px; overflow: hidden; margin-bottom: 3px; }
+.sfill { height: 100%; border-radius: 50px; }
+.fn { font-size: 10px; line-height: 1.4; }
+.fb-enc { background: #FEF6DC; border-radius: 9px; padding: 9px 12px; margin-top: 8px; font-size: 12px; font-weight: 700; color: #C89B1C; border-left: 4px solid #F5C842; }
+
+/* INSTRUCTOR */
+.inst-banner { background: linear-gradient(135deg,#0F2044,#1B3A6B); }
+.dash4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 16px; }
+.mc { background: #fff; border: 2px solid #D0D9EE; border-radius: 12px; padding: 12px; text-align: center; }
+.mn { font-size: 22px; font-weight: 900; display: block; margin-bottom: 2px; }
+.ml { font-size: 10px; color: #5A6A8A; font-weight: 600; }
+.mc.n .mn{color:#1B3A6B}.mc.g .mn{color:#C89B1C}.mc.r .mn{color:#C0392B}.mc.gr .mn{color:#1A7A4A}
+.d2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px; margin-bottom: 14px; }
+.dc { background: #fff; border: 2px solid #D0D9EE; border-radius: 12px; padding: 14px; }
+.dc h3 { font-size: 13px; margin-bottom: 10px; color: #1B3A6B; }
+.sr { display: flex; align-items: center; gap: 7px; padding: 8px 0; border-bottom: 1px solid #D0D9EE; }
+.sr:last-child { border-bottom: none; }
+.sav { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; flex-shrink: 0; }
+.sname { font-weight: 700; font-size: 12px; flex: 1; }
+.smeta { font-size: 10px; color: #5A6A8A; }
+.sp { width: 60px; } .sp .sbar { height: 4px; }
+.lb { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 50px; }
+.ei { display: flex; align-items: center; gap: 7px; padding: 7px 0; border-bottom: 1px solid #D0D9EE; }
+.ei:last-child { border-bottom: none; }
+.et { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 50px; flex-shrink: 0; }
+.ed { font-size: 11px; flex: 1; }
+.ec { font-weight: 800; font-size: 13px; color: #5A6A8A; }
+.af { display: flex; flex-direction: column; gap: 7px; }
+.af select, .af textarea { padding: 8px 11px; border: 2px solid #D0D9EE; border-radius: 9px; font-size: 11px; background: #F4F6FB; width: 100%; outline: none; resize: vertical; }
+.abtn { background: #1B3A6B; color: #fff; border: none; border-radius: 50px; padding: 9px 18px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; cursor: pointer; }
+.pw-panel { display: none; background: #fff; border: 2px solid #E8EEF8; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; }
+.pw-row { display: flex; gap: 8px; align-items: center; margin-bottom: 7px; }
+.pw-row label { margin: 0; width: 130px; flex-shrink: 0; font-size: 11px; }
+.pw-inp { flex: 1; padding: 8px 12px; border: 2px solid #D0D9EE; border-radius: 50px; font-size: 13px; outline: none; }
+.pw-msg { font-size: 11px; font-weight: 700; display: none; margin-top: 5px; }
+
+.bdg-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.bdg { background: #fff; border: 2px solid #D0D9EE; border-radius: 9px; padding: 7px 11px; font-size: 11px; font-weight: 700; color: #5A6A8A; }
+.bdg.on { border-color: #F5C842; background: #FEF6DC; color: #C89B1C; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,32,68,.6); z-index: 200; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal-box { background: #fff; border-radius: 18px; padding: 28px 24px; width: 100%; max-width: 340px; text-align: center; }
+.modal-inp { width: 100%; padding: 11px 16px; border: 2px solid #D0D9EE; border-radius: 50px; font-weight: 700; font-size: 15px; outline: none; text-align: center; margin-bottom: 9px; }
+.modal-btn { width: 100%; padding: 12px; background: linear-gradient(135deg,#1B3A6B,#C89B1C); color: #fff; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 14px; cursor: pointer; margin-bottom: 7px; }
+.modal-cancel { background: none; border: none; color: #5A6A8A; font-size: 12px; font-weight: 700; cursor: pointer; }
+.modal-err { color: #C0392B; font-size: 11px; font-weight: 700; margin-top: 5px; display: none; }
+
+@media(max-width:600px){
+  .page{padding:14px 12px}
+  .lang-row{flex-direction:column;gap:6px}
+  .dash4{grid-template-columns:repeat(2,1fr)}
+  .d2{grid-template-columns:1fr}
+  .fb-grid{grid-template-columns:1fr}
+  .badges{display:none}
+  .pronun-word{font-size:24px}
+  .side-row{flex-direction:column}
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#D0D9EE;border-radius:50px}
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME ══ -->
+<div id="welcome">
+  <div class="card">
+    <div style="font-size:48px;margin-bottom:8px">🌍</div>
+    <h1>Welcome to Lingua</h1>
+    <p>AI-powered voice conversation practice</p>
+    <label>Your name</label>
+    <input id="inp-name" type="text" placeholder="Enter your name…" autocomplete="given-name">
+    <label>Language to practice</label>
+    <div class="lang-row">
+      <button class="lang-btn on" id="lb-Spanish">🇪🇸 Spanish<br><small>Latin American</small></button>
+      <button class="lang-btn"    id="lb-French" >🇫🇷 French<br><small>Standard</small></button>
+      <button class="lang-btn"    id="lb-English">🇺🇸 English<br><small>American</small></button>
+    </div>
+    <label>Your ACTFL level</label>
+    <select id="inp-level">
+      <option>Novice Low</option><option>Novice Mid</option><option>Novice High</option>
+      <option>Intermediate Low</option><option selected>Intermediate Mid</option><option>Intermediate High</option>
+      <option>Advanced Low</option><option>Advanced Mid</option><option>Advanced High</option><option>Superior</option>
+    </select>
+    <button class="go" id="btn-start">Start Practicing →</button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+
+  <nav class="nav">
+    <div class="logo"><span class="logo-dot"></span>Lingua</div>
+    <div class="nav-right">
+      <button class="lock-btn" id="inst-lock-btn" title="Instructor login">🔐</button>
+      <button class="logout-btn" id="inst-logout-btn">🔓 Log out</button>
+      <button class="ntab active" id="tab-student">🎓 Student</button>
+      <button class="ntab" id="tab-instructor" style="display:none">📊 Instructor<span class="nbadge">PRIVATE</span></button>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="banner">
+      <h2 id="app-greeting">¡Hola!</h2>
+      <p id="app-sub">Ready to practice today?</p>
+      <div class="bchips">
+        <span class="bchip" id="chip-streak">🔥 0-day streak</span>
+        <span class="bchip" id="chip-time">⏱ 0m spoken</span>
+        <span class="bchip" id="chip-badges">🏅 1 badge</span>
+      </div>
+    </div>
+
+    <div class="level-row">
+      <label>Practicing:</label>
+      <span id="lr-lang" style="font-weight:800;font-size:12px;margin-right:4px"></span>
+      <select class="level-sel" id="lr-level">
+        <option>Novice Low</option><option>Novice Mid</option><option>Novice High</option>
+        <option>Intermediate Low</option><option>Intermediate Mid</option><option>Intermediate High</option>
+        <option>Advanced Low</option><option>Advanced Mid</option><option>Advanced High</option><option>Superior</option>
+      </select>
+      <button class="change-btn" id="change-lang-btn">↺ Change</button>
+    </div>
+
+    <div class="sec">🎭 Conversation Practice</div>
+
+    <!-- ROLE-PLAY -->
+    <div class="mode-card" id="mc-roleplay">
+      <div class="mode-header" id="mh-roleplay">
+        <div class="mode-icon" style="background:#E8EEF8">🎭</div>
+        <div><div class="mode-title">Role-Play</div><div class="mode-sub">Act out real-world situations</div></div>
+        <span class="mode-arrow">›</span>
+      </div>
+      <div class="mode-body">
+        <div class="topic-chips" id="rp-chips">
+          <span class="tc active" data-scenario="doctor" data-label="Doctor Visit">🏥 Doctor Visit</span>
+          <span class="tc" data-scenario="hotel" data-label="Hotel Check-In">🏨 Hotel Check-In</span>
+          <span class="tc" data-scenario="market" data-label="Market Bargaining">🛒 Market</span>
+          <span class="tc" data-scenario="work" data-label="First Day at Work">🏢 First Day at Work</span>
+          <span class="tc" data-scenario="lost" data-label="Lost Tourist">🗺️ Lost Tourist</span>
+          <span class="tc" data-scenario="phone" data-label="Phone Call">📞 Phone Call</span>
+          <span class="tc" data-scenario="restaurant" data-label="Restaurant">🍽️ Restaurant</span>
+        </div>
+        <div class="custom-row">
+          <input class="custom-inp" id="rp-custom" type="text" placeholder="Or describe your own role-play situation…">
+        </div>
+        <button class="start-btn" id="rp-start">Start Role-Play →</button>
+      </div>
+    </div>
+
+    <!-- DEBATE -->
+    <div class="mode-card" id="mc-debate">
+      <div class="mode-header" id="mh-debate">
+        <div class="mode-icon" style="background:#FEF6DC">🗣️</div>
+        <div><div class="mode-title">Debate</div><div class="mode-sub">Argue a position persuasively</div></div>
+        <span class="mode-arrow">›</span>
+      </div>
+      <div class="mode-body">
+        <div class="topic-chips" id="db-chips">
+          <span class="tc active" data-topic="Social media does more harm than good">📱 Social Media</span>
+          <span class="tc" data-topic="University education should be free">🎓 Free University</span>
+          <span class="tc" data-topic="Remote work is better than office work">🏠 Remote Work</span>
+          <span class="tc" data-topic="Artificial intelligence will destroy more jobs than it creates">🤖 AI and Jobs</span>
+          <span class="tc" data-topic="Climate change should be the top global priority">🌿 Climate Change</span>
+        </div>
+        <div class="custom-row" style="margin-bottom:10px">
+          <input class="custom-inp" id="db-custom" type="text" placeholder="Or enter your own debate topic…">
+        </div>
+        <div style="font-size:11px;font-weight:700;color:#5A6A8A;margin-bottom:6px;">Which side will you argue?</div>
+        <div class="side-row">
+          <div class="side-btn active" id="side-for">👍 For</div>
+          <div class="side-btn" id="side-against">👎 Against</div>
+          <div class="side-btn" id="side-surprise">🎲 Surprise</div>
+        </div>
+        <button class="start-btn" id="db-start">Start Debate →</button>
+      </div>
+    </div>
+
+    <!-- STORYTELLING -->
+    <div class="mode-card" id="mc-story">
+      <div class="mode-header" id="mh-story">
+        <div class="mode-icon" style="background:#E6F4ED">📖</div>
+        <div><div class="mode-title">Storytelling</div><div class="mode-sub">Narrate stories in past tense</div></div>
+        <span class="mode-arrow">›</span>
+      </div>
+      <div class="mode-body">
+        <div class="topic-chips" id="st-chips">
+          <span class="tc active" data-prompt="Tell me about an interesting trip or journey you have taken.">✈️ A Memorable Trip</span>
+          <span class="tc" data-prompt="Tell me about a funny or embarrassing moment from your life.">😄 A Funny Moment</span>
+          <span class="tc" data-prompt="Tell me about someone who has had a big influence on your life.">👤 An Influential Person</span>
+          <span class="tc" data-prompt="Tell me about a challenge you faced and how you overcame it.">💪 Overcoming a Challenge</span>
+          <span class="tc" data-prompt="Tell me about your earliest childhood memory.">🧒 A Childhood Memory</span>
+        </div>
+        <div class="custom-row">
+          <input class="custom-inp" id="st-custom" type="text" placeholder="Or enter your own story prompt…">
+        </div>
+        <button class="start-btn" id="st-start">Start Storytelling →</button>
+      </div>
+    </div>
+
+    <!-- PRONUNCIATION -->
+    <div class="sec" style="margin-top:18px">🔊 Pronunciation Practice</div>
+    <div class="mode-card" style="border-color:#F5C842">
+      <div class="mode-header" id="mh-pronun">
+        <div class="mode-icon" style="background:#FEF6DC">🎵</div>
+        <div><div class="mode-title" style="color:#C89B1C">Pronunciation</div><div class="mode-sub">Listen, repeat, type &amp; hear</div></div>
+        <span class="mode-arrow">›</span>
+      </div>
+      <div class="mode-body" id="mc-pronun-body" style="display:none">
+        <div class="ptabs">
+          <div class="ptab active" id="ptab-listen">👂 Listen &amp; Repeat</div>
+          <div class="ptab" id="ptab-lookup">⌨️ Type &amp; Hear</div>
+        </div>
+
+        <div class="ptab-content active" id="pt-listen">
+          <div class="pronun-card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:11px;font-weight:700;color:#5A6A8A" id="word-counter">Word 1 of 10</span>
+              <span style="font-size:11px;font-weight:700;color:#C89B1C" id="word-category">Greetings</span>
+            </div>
+            <div class="pronun-word" id="pronun-word">Hola</div>
+            <div class="pronun-phonetic" id="pronun-phonetic">/ˈo.la/</div>
+            <div class="pronun-translation" id="pronun-translation">Hello</div>
+            <div class="pronun-btn-row">
+              <button class="pbtn pbtn-listen" id="btn-listen-word">🔊 Listen</button>
+              <button class="pbtn pbtn-record" id="btn-record-word">🎙️ Record &amp; Compare</button>
+              <button class="pbtn pbtn-next" id="btn-next-word">Next →</button>
+            </div>
+            <div class="pronun-fb" id="listen-feedback">
+              <div style="display:flex;justify-content:space-between">
+                <span style="font-weight:800;font-size:13px;color:#1B3A6B">Score</span>
+                <span style="font-weight:900;font-size:18px" id="score-num">--</span>
+              </div>
+              <div class="pronun-score-bar"><div class="pronun-score-fill" id="score-fill" style="width:0%"></div></div>
+              <div class="pronun-tip" id="pronun-tip"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:7px;justify-content:center">
+            <button class="pbtn pbtn-next" id="btn-cat-prev" style="font-size:11px">← Previous</button>
+            <button class="pbtn pbtn-next" id="btn-cat-next" style="font-size:11px">Next category →</button>
+          </div>
+        </div>
+
+        <div class="ptab-content" id="pt-lookup">
+          <div class="pronun-card">
+            <p style="font-size:12px;color:#5A6A8A;margin-bottom:12px">Type any word or phrase to hear it pronounced.</p>
+            <div class="lookup-row">
+              <input class="lookup-inp" id="lookup-inp" type="text" placeholder="Type a word or phrase…">
+              <button class="lookup-btn" id="lookup-go">🔊 Hear it</button>
+            </div>
+            <div class="lookup-result" id="lookup-result">
+              <div class="lookup-word-big" id="lookup-word-big"></div>
+              <div class="speed-row">
+                <button class="speed-btn active" id="sp-slow">🐢 Slow</button>
+                <button class="speed-btn" id="sp-normal">▶️ Normal</button>
+                <button class="speed-btn" id="sp-fast">⚡ Fast</button>
+              </div>
+              <div style="background:#E8EEF8;border-radius:10px;padding:12px;margin-top:10px">
+                <div style="font-weight:800;font-size:12px;color:#1B3A6B;margin-bottom:8px">🎙️ Now you try</div>
+                <button class="pbtn pbtn-record" id="lookup-record">🎙️ Record &amp; Compare</button>
+                <div class="pronun-fb" id="lookup-feedback" style="margin-top:8px">
+                  <div style="display:flex;justify-content:space-between">
+                    <span style="font-weight:800;font-size:12px;color:#1B3A6B">Score</span>
+                    <span style="font-weight:900;font-size:16px" id="lookup-score-num">--</span>
+                  </div>
+                  <div class="pronun-score-bar"><div class="pronun-score-fill" id="lookup-score-fill" style="width:0%"></div></div>
+                  <div class="pronun-tip" id="lookup-tip"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" style="margin-top:18px">🏅 Your badges</div>
+    <div class="bdg-row">
+      <div class="bdg on">🔥 First Session</div>
+      <div class="bdg">🔒 5-Day Streak</div>
+      <div class="bdg">🔒 1 Hour Spoken</div>
+      <div class="bdg">🔒 Pronunciation Pro</div>
+      <div class="bdg">🔒 First Debate</div>
+      <div class="bdg">🔒 Storyteller</div>
+    </div>
+  </div>
+
+  <!-- CONVERSATION PAGE -->
+  <div class="page" id="page-conv">
+    <div class="toprow">
+      <button class="back" id="btn-back">← Back</button>
+      <button class="endbtn" id="btn-end">End &amp; Get Feedback</button>
+    </div>
+    <div class="conv-hdr">
+      <div class="av">🤖</div>
+      <div class="conv-info">
+        <h3 id="conv-title">Role-Play</h3>
+        <p id="conv-sub">Practicing Spanish · Intermediate Mid</p>
+      </div>
+      <div class="badges">
+        <span class="badge" id="badge-lang">🇪🇸 Spanish</span>
+        <span class="badge gold" id="badge-level">Intermediate Mid</span>
+      </div>
+    </div>
+    <div class="chatbox" id="chatbox"></div>
+    <div class="inrow">
+      <button class="mbtn" id="btn-mic">🎙️</button>
+      <input class="tin" id="chat-inp" type="text" placeholder="Type or speak…">
+      <button class="sbtn" id="btn-send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="hint" id="hint">🎙️ Click the mic to speak — or type below</div>
+    <div class="notice" id="notice"></div>
+    <div class="fb" id="fb">
+      <h3>✨ Session Feedback</h3>
+      <div class="fb-grid" id="fb-grid"></div>
+      <div class="fb-enc" id="fb-enc"></div>
+    </div>
+  </div>
+
+  <!-- INSTRUCTOR PAGE -->
+  <div class="page" id="page-instructor">
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap">
+      <button id="btn-student-view" style="padding:8px 16px;background:#fff;border:2px solid #D0D9EE;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;color:#1B3A6B;cursor:pointer">🎓 Student View</button>
+      <button id="btn-toggle-pw" style="padding:8px 16px;background:#fff;border:2px solid #D0D9EE;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;color:#1B3A6B;cursor:pointer">🔑 Change Password</button>
+    </div>
+    <div class="pw-panel" id="pw-panel">
+      <h3 style="font-size:13px;color:#1B3A6B;margin-bottom:10px">🔑 Change Instructor Password</h3>
+      <div class="pw-row"><label>Current password</label><input class="pw-inp" id="pw-current" type="password"></div>
+      <div class="pw-row"><label>New password</label><input class="pw-inp" id="pw-new" type="password" placeholder="Min. 6 characters"></div>
+      <div class="pw-row"><label>Confirm</label><input class="pw-inp" id="pw-confirm" type="password"></div>
+      <button class="abtn" id="btn-save-pw">Save Password</button>
+      <div class="pw-msg" id="pw-msg"></div>
+    </div>
+    <div class="banner inst-banner">
+      <h2>Instructor Dashboard 📊</h2>
+      <p>Language Courses · Demo Data</p>
+    </div>
+    <div class="dash4">
+      <div class="mc n"><span class="mn">24</span><span class="ml">Active Students</span></div>
+      <div class="mc g"><span class="mn">187</span><span class="ml">Sessions This Week</span></div>
+      <div class="mc r"><span class="mn">4h 12m</span><span class="ml">Avg. Speaking Time</span></div>
+      <div class="mc gr"><span class="mn">91%</span><span class="ml">Completion Rate</span></div>
+    </div>
+    <div class="d2">
+      <div class="dc">
+        <h3>🎓 Student Progress</h3>
+        <div class="sr"><div class="sav" style="background:#E8EEF8;color:#1B3A6B">SO</div><div style="flex:1"><div class="sname">Sofia Ortega</div><div class="smeta">Today · Role-Play</div></div><span class="lb" style="background:#E8EEF8;color:#1B3A6B">Int. Mid</span><div class="sp"><div class="sbar"><div class="sfill" style="width:72%;background:#1B3A6B"></div></div></div></div>
+        <div class="sr"><div class="sav" style="background:#FEF6DC;color:#C89B1C">ML</div><div style="flex:1"><div class="sname">Marcus Lee</div><div class="smeta">Yesterday · Debate</div></div><span class="lb" style="background:#FEF6DC;color:#C89B1C">Int. High</span><div class="sp"><div class="sbar"><div class="sfill" style="width:85%;background:#C89B1C"></div></div></div></div>
+        <div class="sr"><div class="sav" style="background:#FDECEA;color:#C0392B">AK</div><div style="flex:1"><div class="sname">Aisha Khan</div><div class="smeta">3 days ago ⚠️</div></div><span class="lb" style="background:#FDECEA;color:#C0392B">Nov. High</span><div class="sp"><div class="sbar"><div class="sfill" style="width:38%;background:#C0392B"></div></div></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="dc">
+          <h3>⚠️ Common Errors</h3>
+          <div class="ei"><span class="et" style="background:#E8EEF8;color:#1B3A6B">Grammar</span><span class="ed">Ser vs. estar</span><span class="ec">14</span></div>
+          <div class="ei"><span class="et" style="background:#FEF6DC;color:#C89B1C">Vocab</span><span class="ed">False cognates</span><span class="ec">9</span></div>
+        </div>
+        <div class="dc">
+          <h3>📋 Assign Activity</h3>
+          <div class="af">
+            <select><option>All Students</option><option>Sofia Ortega</option><option>Marcus Lee</option></select>
+            <select><option>Role-Play</option><option>Debate</option><option>Storytelling</option><option>Pronunciation</option></select>
+            <textarea rows="2" placeholder="Custom instruction (optional)…"></textarea>
+            <button class="abtn" onclick="alert('✅ Activity assigned!')">Assign Activity ✓</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end app -->
+
+<!-- INSTRUCTOR LOGIN MODAL -->
+<div class="modal-overlay" id="inst-modal">
+  <div class="modal-box">
+    <div style="font-size:38px;margin-bottom:8px">🔐</div>
+    <h3 style="font-size:18px;color:#1B3A6B;margin-bottom:4px">Instructor Access</h3>
+    <p style="font-size:12px;color:#5A6A8A;margin-bottom:16px">Enter the instructor password.</p>
+    <input class="modal-inp" id="inst-pw-input" type="password" placeholder="Password">
+    <button class="modal-btn" id="inst-pw-btn">Unlock Dashboard →</button>
+    <div class="modal-err" id="inst-pw-err">⚠️ Incorrect password.</div><br>
+    <button class="modal-cancel" id="inst-modal-cancel">Cancel</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ══ CONFIG ══
+var WORKER_URL = 'https://lingua-proxy.carmenjj9.workers.dev';
+var LANG_CODE = { Spanish:'es-US', French:'fr-FR', English:'en-US' };
+var LANG_FLAG = { Spanish:'🇪🇸', French:'🇫🇷', English:'🇺🇸' };
+var TUTOR     = { Spanish:'Luna', French:'Émile', English:'Sam' };
+var INSTRUCTOR_PASSWORD = localStorage.getItem('lng_inst_pw') || 'lingua2025';
+
+var SCENARIO_DESC = {
+  doctor:     { es:"una consulta medica. Usted es la doctora Garcia, el estudiante es el paciente", fr:"une consultation medicale. Vous etes le docteur Martin, l etudiant est le patient", en:"a doctor visit. You are Dr. Smith, the student is the patient" },
+  hotel:      { es:"el check-in de un hotel. Usted es el recepcionista", fr:"l enregistrement a un hotel. Vous etes le receptionniste", en:"a hotel check-in. You are the front desk clerk" },
+  market:     { es:"un mercado donde se negocia el precio. Usted es el vendedor", fr:"un marche ou l on negocie le prix. Vous etes le vendeur", en:"a market where prices are negotiated. You are the vendor" },
+  work:       { es:"el primer dia de trabajo del estudiante. Usted es un companero de trabajo", fr:"le premier jour de travail de l etudiant. Vous etes un collegue", en:"the student first day at a new job. You are a coworker" },
+  lost:       { es:"un turista perdido pidiendo ayuda. Usted es un residente local", fr:"un touriste perdu demandant de l aide. Vous etes un resident local", en:"a lost tourist asking for help. You are a local resident" },
+  phone:      { es:"una llamada telefonica para programar una cita. Usted contesta el telefono", fr:"un appel telephonique pour prendre rendez-vous. Vous repondez au telephone", en:"a phone call to schedule an appointment. You answer the phone" },
+  restaurant: { es:"un restaurante donde el estudiante pide comida. Usted es el camarero", fr:"un restaurant ou l etudiant commande a manger. Vous etes le serveur", en:"a restaurant where the student orders food. You are the waiter" }
+};
+
+// ══ STATE ══
+var studentName = '';
+var lang  = 'Spanish';
+var level = 'Intermediate Mid';
+var mode  = 'roleplay';
+var scenarioKey = 'doctor';
+var scenarioLabel = 'Doctor Visit';
+var debateTopic = 'Social media does more harm than good';
+var debateSide  = 'For';
+var storyPrompt = 'Tell me about an interesting trip or journey you have taken.';
+var chat  = [];
+
+// ══ SPEECH SYNTHESIS ══
+var synth = window.speechSynthesis;
+var voices = [];
+var speaking = false;
+var lockedVoice = null;
+
+function loadV(){ voices = synth.getVoices(); }
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadV;
+loadV(); setTimeout(loadV,500); setTimeout(loadV,1500);
+
+function pickVoice(){
+  if(!voices.length) loadV();
+  var code = LANG_CODE[lang] || 'es-US';
+  var l = code.split('-')[0];
+  var candidates = voices.filter(function(v){ return v.lang === code || v.lang.startsWith(l); });
+  if(!candidates.length) candidates = voices;
+  var preferFemale = (lang !== 'French');
+  var femaleNames = ['female','woman','zira','sabina','paulina','monica','mónica','rosa','helena','lucia','lucía','sofia','sofía','karen','samantha','victoria','elvira','laura','maria','maría','carmen','isabela','isabella','valentina','camila','dalia','raquel','marina','catalina','salome','salomé','angelica','angélica','esperanza'];
+  var maleNames = ['male','man','david','mark','richard','thomas','henri','paul','jorge','diego','carlos','miguel','pablo','pedro','juan','antoine','daniel','fernando','enrique','raul','raúl'];
+  var keywords = preferFemale ? femaleNames : maleNames;
+  var oppositeKeywords = preferFemale ? maleNames : femaleNames;
+  var match = candidates.find(function(v){
+    var n = v.name.toLowerCase();
+    return keywords.some(function(k){ return n.indexOf(k) >= 0; });
+  });
+  if(!match){
+    var filtered = candidates.filter(function(v){
+      var n = v.name.toLowerCase();
+      return !oppositeKeywords.some(function(k){ return n.indexOf(k) >= 0; });
+    });
+    match = filtered[0] || candidates[0];
+  }
+  lockedVoice = match || candidates[0] || null;
+}
+
+function say(txt, cb){
+  if(!txt){ if(cb) cb(); return; }
+  synth.cancel();
+  setTimeout(function(){
+    var u = new SpeechSynthesisUtterance(txt);
+    u.lang = LANG_CODE[lang] || 'es-US';
+    u.rate = 0.9; u.pitch = 1.0; u.volume = 1.0;
+    if(lockedVoice) u.voice = lockedVoice;
+    u.onend = u.onerror = function(){ speaking=false; if(cb) cb(); };
+    speaking = true;
+    synth.speak(u);
+  }, 150);
+}
+
+// ══ MIC ══
+var recog = null;
+var listening = false;
+var recOn = false;
+
+function initMic(){
+  if(recog) return;
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ showNotice('⚠️ Voice not supported. Use Chrome or Edge.'); return; }
+
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(function(stream){
+      recog = new SR();
+      recog.lang = LANG_CODE[lang] || 'es-US';
+      recog.continuous = true;
+      recog.interimResults = true;
+
+      var finalText = '';
+      var silTimer = null;
+
+      recog.onresult = function(e){
+        if(!listening) return;
+        var interim = '';
+        for(var i = e.resultIndex; i < e.results.length; i++){
+          if(e.results[i].isFinal) finalText += e.results[i][0].transcript + ' ';
+          else interim += e.results[i][0].transcript;
+        }
+        var display = (finalText + interim).trim();
+        var inp = document.getElementById('chat-inp');
+        if(inp) inp.value = display;
+        clearTimeout(silTimer);
+        if(display){
+          silTimer = setTimeout(function(){
+            if(!listening) return;
+            var toSend = finalText.trim() || display;
+            if(!toSend) return;
+            finalText = '';
+            listening = false; recOn = false;
+            setMicUI(false);
+            sendText(toSend);
+          }, 1800);
+        }
+      };
+
+      recog.onend = function(){
+        if(recog) setTimeout(function(){ try{ recog.start(); }catch(ex){} }, 100);
+      };
+
+      recog.onerror = function(e){
+        if(e.error === 'not-allowed'){
+          showNotice('⚠️ Microphone denied. Refresh and allow microphone access.');
+        }
+      };
+
+      try{ recog.start(); }catch(ex){}
+    })
+    .catch(function(){
+      showNotice('⚠️ Microphone denied. Go to Windows Settings → Privacy → Microphone and turn it On, then refresh.');
+    });
+}
+
+function toggleMic(){
+  var s = new SpeechSynthesisUtterance(' '); s.volume = 0; synth.speak(s);
+  if(!recog){
+    initMic();
+    setTimeout(function(){
+      if(recog){ recOn=true; listening=true; var inp=document.getElementById('chat-inp'); if(inp) inp.value=''; setMicUI(true); }
+    }, 1500);
+    return;
+  }
+  if(recOn){
+    recOn=false; listening=false; setMicUI(false);
+  } else {
+    recOn=true; listening=true;
+    var inp=document.getElementById('chat-inp'); if(inp) inp.value='';
+    setMicUI(true);
+  }
+}
+
+function setMicUI(on){
+  var b=document.getElementById('btn-mic'), h=document.getElementById('hint');
+  if(b){ b.className='mbtn'+(on?' rec':''); b.textContent=on?'⏹️':'🎙️'; }
+  if(h){ h.textContent=on?'🔴 Listening… pause to send — click ⏹️ to stop':'🎙️ Click the mic to speak — or type below'; h.className='hint'+(on?' rec':''); }
+}
+
+function showNotice(msg){
+  var n = document.getElementById('notice');
+  if(n){ n.textContent = msg; n.style.display = 'block'; }
+}
+
+// ══ SYSTEM PROMPT ══
+function buildSystemPrompt(){
+  var tutorName = TUTOR[lang] || 'Luna';
+  var langInstruction = {
+    Spanish: 'Conduct the ENTIRE conversation in Spanish (Latin American variant). Never use English.',
+    French:  'Conduct the ENTIRE conversation in French. Never use English.',
+    English: 'Conduct the ENTIRE conversation in English.'
+  };
+  var levelGuidance = {
+    'Novice Low':'Use only simple isolated words. Speak very slowly.',
+    'Novice Mid':'Use very simple vocabulary and short sentences.',
+    'Novice High':'Use simple sentences and familiar vocabulary.',
+    'Intermediate Low':'Use simple sentences. Ask easy questions.',
+    'Intermediate Mid':'Use everyday vocabulary and moderately complex sentences.',
+    'Intermediate High':'Use varied vocabulary. Encourage elaboration.',
+    'Advanced Low':'Use sophisticated vocabulary. Expect paragraph responses.',
+    'Advanced Mid':'Use rich varied language. Discuss abstract topics.',
+    'Advanced High':'Use complex structures and idioms.',
+    'Superior':'Engage as with a near-native speaker.'
+  };
+
+  var scenarioContext = '';
+  if(mode === 'roleplay'){
+    var sd = SCENARIO_DESC[scenarioKey] || SCENARIO_DESC.doctor;
+    var langKey = lang === 'Spanish' ? 'es' : (lang === 'French' ? 'fr' : 'en');
+    scenarioContext = 'Scenario: ' + (sd[langKey] || sd.en) + '. If the student typed a custom scenario instead, follow their description exactly.';
+  } else if(mode === 'debate'){
+    var sideText = debateSide === 'Surprise' ? 'Randomly assign the student a side at the start and tell them which side they argue.' : ('The student argues ' + debateSide + ' this statement. You argue the opposite side.');
+    scenarioContext = 'Debate topic: "' + debateTopic + '". ' + sideText + ' Push back with logical counter-arguments and ask for evidence.';
+  } else if(mode === 'story'){
+    scenarioContext = 'Storytelling prompt: ' + storyPrompt + ' Ask engaging follow-up questions based on what the student actually shares — encourage past-tense narration and descriptive detail.';
+  }
+
+  var modeInstruction = {
+    roleplay: 'You are role-playing a character based on the scenario. Stay fully in character.',
+    debate:   'You are a debate opponent. Respond with logical counter-arguments based on what the student actually said.',
+    story:    'You are a supportive listener. Ask engaging follow-up questions based on the specific details the student shares.'
+  };
+
+  return 'You are ' + tutorName + ', a warm, encouraging language tutor. ' +
+    langInstruction[lang] + ' ' +
+    'The student, ' + studentName + ', is at ACTFL level: ' + level + '. ' + (levelGuidance[level]||'') + ' ' +
+    modeInstruction[mode] + ' ' + scenarioContext + ' ' +
+    'CRITICAL: Respond logically and specifically to what the student actually said. Never repeat a question they already answered. Never ignore their answer. ' +
+    'Keep responses to 1-3 short sentences — this is a spoken conversation. ' +
+    'Occasionally (not every turn — about 1 in 3 responses), after your main response, add a brief pedagogical note prefixed with exactly "||NOTE||" followed by a short tip in ' + lang + ' about grammar, vocabulary, or pronunciation based on what the student said. If you have no note this turn, do not include "||NOTE||" at all.';
+}
+
+async function callGemini(userMessage){
+  var systemPrompt = buildSystemPrompt();
+  var contents = [];
+  for(var i=0; i<chat.length; i++){
+    var m = chat[i];
+    if(m.content === 'Begin.') continue;
+    contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{text: m.content}] });
+  }
+  if(userMessage){ contents.push({role:'user', parts:[{text:userMessage}]}); }
+
+  var resp = await fetch(WORKER_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      system_instruction: {parts:[{text: systemPrompt}]},
+      contents: contents,
+      generationConfig: {maxOutputTokens: 220, temperature: 0.9}
+    })
+  });
+  var data = await resp.json();
+  if(data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  var text = data.candidates && data.candidates[0] && data.candidates[0].content
+    ? data.candidates[0].content.parts[0].text
+    : null;
+  if(!text) throw new Error('No response from AI');
+  return text;
+}
+
+// ══ CHAT UI ══
+function addMsg(role, txt, autoSpeak){
+  var box = document.getElementById('chatbox');
+  var wrap = document.createElement('div'); wrap.className = 'msg '+(role==='ai'?'ai':'me');
+  var av = document.createElement('div'); av.className = 'mav'; av.textContent = role==='ai'?'🤖':'👤';
+  var bbl = document.createElement('div'); bbl.className = 'bubble'; bbl.textContent = txt;
+  if(role==='ai'){
+    var rb = document.createElement('button'); rb.className='replay'; rb.textContent='🔊 Replay';
+    (function(t){ rb.onclick=function(){ say(t); }; })(txt);
+    bbl.appendChild(rb);
+  }
+  wrap.appendChild(av); wrap.appendChild(bbl);
+  box.appendChild(wrap); box.scrollTop = box.scrollHeight;
+  if(role==='ai' && autoSpeak) say(txt);
+}
+
+function addNote(txt){
+  var box = document.getElementById('chatbox');
+  var bbl = document.createElement('div');
+  bbl.className = 'note-bubble';
+  bbl.textContent = '📝 ' + TUTOR[lang] + ': ' + txt;
+  box.appendChild(bbl);
+  box.scrollTop = box.scrollHeight;
+}
+
+function addThinking(){
+  removeThinking();
+  var box = document.getElementById('chatbox');
+  var d = document.createElement('div'); d.className='msg ai'; d.id='thinking';
+  d.innerHTML = '<div class="mav">🤖</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+function removeThinking(){ var t=document.getElementById('thinking'); if(t) t.remove(); }
+
+function sendText(txt){
+  if(!txt || !txt.trim()) return;
+  listening = false; recOn = false; setMicUI(false);
+  synth.cancel(); speaking=false;
+  document.getElementById('chat-inp').value='';
+  addMsg('me', txt, false);
+  chat.push({role:'user', content:txt});
+
+  addThinking();
+
+  callGemini(txt).then(function(fullText){
+    removeThinking();
+    var parts = fullText.split('||NOTE||');
+    var sayText = parts[0].trim();
+    var noteText = parts[1] ? parts[1].trim() : '';
+    if(!sayText) sayText = '...';
+    chat.push({role:'assistant', content: sayText});
+    addMsg('ai', sayText, true);
+    if(noteText) setTimeout(function(){ addNote(noteText); }, 500);
+    setTimeout(function(){
+      if(recog){
+        recOn = true; listening = true;
+        var inp = document.getElementById('chat-inp');
+        if(inp) inp.value = '';
+        setMicUI(true);
+      }
+    }, 3000);
+  }).catch(function(err){
+    removeThinking();
+    console.error('Gemini error:', err);
+    var fallback = {
+      Spanish: 'Disculpe, hubo un problema de conexión. ¿Puede repetir lo que dijo?',
+      French:  'Désolé, il y a eu un problème. Pouvez-vous répéter?',
+      English: 'Sorry, there was a connection issue. Could you repeat that?'
+    };
+    addMsg('ai', fallback[lang] || fallback.English, true);
+    setTimeout(function(){ if(recog){ recOn=true; listening=true; setMicUI(true); } }, 2500);
+  });
+}
+
+// ══ LAUNCH CONVERSATION ══
+function launchMode(m){
+  mode = m;
+  level = document.getElementById('lr-level').value;
+  chat = [];
+  document.getElementById('chatbox').innerHTML = '';
+  document.getElementById('fb').style.display = 'none';
+  document.getElementById('notice').style.display = 'none';
+  lockedVoice = null;
+  pickVoice();
+  document.getElementById('chat-inp').placeholder = 'Type or speak in '+lang+'…';
+
+  var titles = {roleplay:'🎭 Role-Play: '+scenarioLabel, debate:'🗣️ Debate: '+debateTopic, story:'📖 Storytelling'};
+  document.getElementById('conv-title').textContent = titles[m] || m;
+  document.getElementById('conv-sub').textContent = 'Practicing '+lang+' · '+level+' · '+studentName;
+  document.getElementById('badge-lang').textContent = LANG_FLAG[lang]+' '+lang;
+  document.getElementById('badge-level').textContent = level;
+
+  showPage('conv');
+
+  if(!recog) initMic();
+
+  setTimeout(function(){
+    addThinking();
+    callGemini(null).then(function(fullText){
+      removeThinking();
+      var parts = fullText.split('||NOTE||');
+      var sayText = parts[0].trim();
+      chat.push({role:'user',content:'Begin.'});
+      chat.push({role:'assistant',content:sayText});
+      addMsg('ai', sayText, true);
+    }).catch(function(err){
+      removeThinking();
+      console.error('Opener error:', err);
+      var fb = {Spanish:'¡Hola! Soy '+TUTOR.Spanish+'. ¿Listo para empezar?', French:'Bonjour! Je suis '+TUTOR.French+'. Prêt?', English:'Hello! I am '+TUTOR.English+'. Ready to start?'};
+      var t = fb[lang] || fb.English;
+      chat.push({role:'user',content:'Begin.'});
+      chat.push({role:'assistant',content:t});
+      addMsg('ai', t, true);
+    });
+  }, 300);
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('tab-student').classList.toggle('active', name !== 'instructor');
+  document.getElementById('tab-instructor').classList.toggle('active', name === 'instructor');
+}
+
+// ══ FEEDBACK ══
+function endSession(){
+  if(chat.length < 4){ alert('Have a short conversation first!'); return; }
+  synth.cancel();
+  if(recog){ listening=false; recOn=false; setMicUI(false); }
+
+  addThinking();
+  var fbPrompt = 'Based on this entire conversation, provide session feedback as a JSON object only (no markdown), with keys: grammar_score (0-100), grammar_note, vocab_score (0-100), vocab_note, fluency_score (0-100), fluency_note, pronunciation_score (0-100), pronunciation_note, encouragement (2 warm sentences addressing ' + studentName + ' by name). All text in ' + lang + '.';
+
+  var contents = chat.filter(function(m){ return m.content !== 'Begin.'; }).map(function(m){
+    return { role: m.role === 'user' ? 'user' : 'model', parts: [{text: m.content}] };
+  });
+
+  fetch(WORKER_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      system_instruction: {parts:[{text: fbPrompt}]},
+      contents: contents,
+      generationConfig: {maxOutputTokens: 500, temperature: 0.4}
+    })
+  }).then(function(r){ return r.json(); })
+    .then(function(data){
+      removeThinking();
+      var text = data.candidates[0].content.parts[0].text;
+      var clean = text.replace(/```json|```/g,'').trim();
+      var fb = JSON.parse(clean);
+      showFeedback(fb);
+    }).catch(function(err){
+      removeThinking();
+      console.error('Feedback error:', err);
+      var fbDefault = {
+        grammar_score:75, grammar_note:'Good effort overall!',
+        vocab_score:72, vocab_note:'Nice vocabulary range.',
+        fluency_score:78, fluency_note:'Natural pace.',
+        pronunciation_score:74, pronunciation_note:'Clear pronunciation.',
+        encouragement:'Great job today, ' + studentName + '! Keep practicing!'
+      };
+      showFeedback(fbDefault);
+    });
+}
+
+function showFeedback(fb){
+  var C = {g:'#1B3A6B', v:'#C89B1C', f:'#1A7A4A', p:'#C0392B'};
+  document.getElementById('fb-grid').innerHTML =
+    fi('Grammar', fb.grammar_score, fb.grammar_note, C.g) +
+    fi('Vocabulary', fb.vocab_score, fb.vocab_note, C.v) +
+    fi('Fluency', fb.fluency_score, fb.fluency_note, C.f) +
+    fi('Pronunciation', fb.pronunciation_score, fb.pronunciation_note, C.p);
+  document.getElementById('fb-enc').textContent = '🌟 ' + fb.encouragement;
+  document.getElementById('fb').style.display = 'block';
+  say(fb.encouragement);
+  document.getElementById('fb').scrollIntoView({behavior:'smooth'});
+}
+function fi(lbl,sc,nt,col){
+  return '<div class="fbi"><label>'+lbl+'</label>'+
+    '<div class="sbar"><div class="sfill" style="width:'+sc+'%;background:'+col+'"></div></div>'+
+    '<div style="font-size:10px;font-weight:800;color:'+col+';margin-bottom:2px">'+sc+'/100</div>'+
+    '<div class="fn">'+nt+'</div></div>';
+}
+</script>
+<script>
+// ══ PRONUNCIATION DATA ══
+var PRONUN_WORDS = {
+  Spanish: {
+    'Greetings': [{w:'Hola',p:'/ˈo.la/',t:'Hello'},{w:'Buenos días',p:'/ˈbwe.nos ˈdi.as/',t:'Good morning'},{w:'Gracias',p:'/ˈɡɾa.sjas/',t:'Thank you'},{w:'Por favor',p:'/poɾ fa.ˈβoɾ/',t:'Please'},{w:'Adiós',p:'/a.ˈðjos/',t:'Goodbye'},{w:'Mucho gusto',p:'/ˈmu.tʃo ˈɡus.to/',t:'Nice to meet you'},{w:'¿Cómo estás?',p:'/ˈko.mo es.ˈtas/',t:'How are you?'},{w:'Perdón',p:'/peɾ.ˈðon/',t:'Sorry'},{w:'De nada',p:"/de ˈna.ða/",t:"You're welcome"},{w:'¡Salud!',p:'/sa.ˈluð/',t:'Cheers'}],
+    'Numbers': [{w:'Uno',p:'/ˈu.no/',t:'One'},{w:'Dos',p:'/dos/',t:'Two'},{w:'Tres',p:'/tɾes/',t:'Three'},{w:'Cuatro',p:'/ˈkwa.tɾo/',t:'Four'},{w:'Cinco',p:'/ˈsiŋ.ko/',t:'Five'},{w:'Diez',p:'/djes/',t:'Ten'},{w:'Veinte',p:'/ˈbejn.te/',t:'Twenty'},{w:'Cien',p:'/sjen/',t:'One hundred'}],
+    'Difficult Sounds': [{w:'Rojo',p:'/ˈro.xo/',t:'Red'},{w:'Perro',p:'/ˈpe.ro/',t:'Dog'},{w:'Guitarra',p:'/ɡi.ˈta.ra/',t:'Guitar'},{w:'Lluvia',p:'/ˈʎu.βja/',t:'Rain'},{w:'Queso',p:'/ˈke.so/',t:'Cheese'},{w:'Calle',p:'/ˈka.ʎe/',t:'Street'}]
+  },
+  French: {
+    'Greetings': [{w:'Bonjour',p:'/bɔ̃.ʒuʁ/',t:'Hello'},{w:'Merci',p:'/mɛʁ.si/',t:'Thank you'},{w:'Au revoir',p:'/o.ʁə.vwaʁ/',t:'Goodbye'},{w:'Enchanté',p:'/ɑ̃.ʃɑ̃.te/',t:'Nice to meet you'},{w:'Excusez-moi',p:'/ɛks.ky.ze mwa/',t:'Excuse me'},{w:'De rien',p:'/də ʁjɛ̃/',t:"You're welcome"}],
+    'Nasal Sounds': [{w:'Maison',p:'/mɛ.zɔ̃/',t:'House'},{w:'Enfant',p:'/ɑ̃.fɑ̃/',t:'Child'},{w:'Bien',p:'/bjɛ̃/',t:'Well'},{w:'Pain',p:'/pɛ̃/',t:'Bread'},{w:'Vin',p:'/vɛ̃/',t:'Wine'},{w:'Cinq',p:'/sɛ̃k/',t:'Five'}],
+    'Silent Letters': [{w:'Très',p:'/tʁɛ/',t:'Very'},{w:'Deux',p:'/dø/',t:'Two'},{w:'Beaucoup',p:'/bo.ku/',t:'A lot'},{w:'Faux',p:'/fo/',t:'False'}]
+  },
+  English: {
+    'Greetings': [{w:'Hello',p:"/həˈloʊ/",t:'Greeting'},{w:'Thank you',p:"/ˈθæŋk juː/",t:'Gratitude'},{w:'Please',p:'/pliːz/',t:'Polite request'},{w:'Goodbye',p:"/ˌɡʊdˈbaɪ/",t:'Farewell'},{w:'Excuse me',p:"/ɪkˈskjuːz miː/",t:'Getting attention'}],
+    'TH Sounds': [{w:'The',p:'/ðə/',t:'Article'},{w:'Think',p:'/θɪŋk/',t:'To consider'},{w:'There',p:'/ðɛr/',t:'In that place'},{w:'Three',p:'/θriː/',t:'Number 3'},{w:'Breathe',p:'/briːð/',t:'To inhale'}],
+    'Vowel Sounds': [{w:'Ship',p:'/ʃɪp/',t:'vs. sheep'},{w:'Cot',p:'/kɒt/',t:'vs. coat'},{w:'Hat',p:'/hæt/',t:'vs. hate'},{w:'Cut',p:'/kʌt/',t:'vs. cat'}]
+  }
+};
+
+var currentCatIdx = 0;
+var currentWordIdx = 0;
+
+function getPronunWords(){ return PRONUN_WORDS[lang] || PRONUN_WORDS.Spanish; }
+function getCatNames(){ return Object.keys(getPronunWords()); }
+function getCurrentWords(){ var cats = getPronunWords(); var names = getCatNames(); return cats[names[currentCatIdx]] || []; }
+function getCurrentWord(){ return getCurrentWords()[currentWordIdx] || {w:'Hola',p:'/ˈo.la/',t:'Hello'}; }
+
+function updatePronunDisplay(){
+  var w = getCurrentWord();
+  var cats = getCatNames();
+  document.getElementById('pronun-word').textContent = w.w;
+  document.getElementById('pronun-phonetic').textContent = w.p;
+  document.getElementById('pronun-translation').textContent = w.t;
+  document.getElementById('word-counter').textContent = 'Word ' + (currentWordIdx+1) + ' of ' + getCurrentWords().length;
+  document.getElementById('word-category').textContent = cats[currentCatIdx];
+  document.getElementById('listen-feedback').classList.remove('show');
+}
+
+function listenWord(){ var w = getCurrentWord(); say(w.w); }
+function nextWord(){ var words = getCurrentWords(); currentWordIdx = (currentWordIdx+1) % words.length; updatePronunDisplay(); }
+function prevCat(){ var cats = getCatNames(); currentCatIdx = (currentCatIdx-1+cats.length)%cats.length; currentWordIdx=0; updatePronunDisplay(); }
+function nextCat(){ var cats = getCatNames(); currentCatIdx = (currentCatIdx+1)%cats.length; currentWordIdx=0; updatePronunDisplay(); }
+
+function scorePronunciation(spoken, target){
+  if(!spoken) return 30;
+  var s = spoken.toLowerCase().trim();
+  var t = target.toLowerCase().trim();
+  if(s === t) return 95 + Math.floor(Math.random()*5);
+  var matches = 0; var minLen = Math.min(s.length, t.length);
+  for(var i=0;i<minLen;i++){ if(s[i]===t[i]) matches++; }
+  var tWords = t.split(' '), sWords = s.split(' ');
+  var wordMatches = 0;
+  tWords.forEach(function(tw){ if(sWords.some(function(sw){ return sw.includes(tw)||tw.includes(sw); })) wordMatches++; });
+  var score = Math.round((matches/Math.max(s.length,t.length))*60 + (wordMatches/tWords.length)*40);
+  score = score + Math.floor(Math.random()*15) - 5;
+  return Math.max(20, Math.min(99, score));
+}
+
+var PRONUN_TIPS = {
+  excellent:['Perfect! Native-level pronunciation! 🌟','Excellent! Keep it up! 🎉'],
+  good:['Very good! Slight adjustment needed.','Good effort! Focus on stress.'],
+  fair:['Good try! Listen again carefully.','Keep practicing!'],
+  needs_work:['Keep going! Break it into syllables.','Practice makes perfect!']
+};
+function getPronunTip(score){
+  var tips = score>=90?PRONUN_TIPS.excellent : score>=70?PRONUN_TIPS.good : score>=50?PRONUN_TIPS.fair : PRONUN_TIPS.needs_work;
+  return tips[Math.floor(Math.random()*tips.length)];
+}
+function scoreColor(score){ return score>=85?'#1A7A4A':score>=65?'#C89B1C':'#C0392B'; }
+
+function showPronunFeedback(score, fbId, fillId, scoreId, tipId){
+  var color = scoreColor(score);
+  document.getElementById(fillId).style.width = score+'%';
+  document.getElementById(fillId).style.background = color;
+  document.getElementById(scoreId).textContent = score+'/100';
+  document.getElementById(scoreId).style.color = color;
+  document.getElementById(tipId).textContent = getPronunTip(score);
+  document.getElementById(fbId).classList.add('show');
+}
+
+var pronunRecog = null, pronunActive = false;
+function startPronunRecording(targetWord, fbId, fillId, scoreId, tipId, btnId){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ alert('Speech recognition not supported. Use Chrome or Edge.'); return; }
+  var btn = document.getElementById(btnId);
+  if(pronunActive && pronunRecog){ pronunRecog.stop(); return; }
+  pronunRecog = new SR();
+  pronunRecog.lang = LANG_CODE[lang] || 'es-US';
+  pronunRecog.continuous = false; pronunRecog.interimResults = false;
+  pronunActive = true;
+  btn.textContent = '⏹️ Stop'; btn.classList.add('recording');
+  pronunRecog.onresult = function(e){
+    var spoken = e.results[0][0].transcript;
+    var score = scorePronunciation(spoken, targetWord);
+    showPronunFeedback(score, fbId, fillId, scoreId, tipId);
+  };
+  pronunRecog.onend = function(){ pronunActive=false; btn.textContent='🎙️ Record & Compare'; btn.classList.remove('recording'); };
+  pronunRecog.onerror = function(){ pronunActive=false; btn.textContent='🎙️ Record & Compare'; btn.classList.remove('recording'); };
+  pronunRecog.start();
+}
+
+var currentLookupWord = '';
+function doLookup(){
+  var val = document.getElementById('lookup-inp').value.trim();
+  if(!val) return;
+  currentLookupWord = val;
+  document.getElementById('lookup-word-big').textContent = val;
+  document.getElementById('lookup-result').classList.add('show');
+  document.getElementById('lookup-feedback').classList.remove('show');
+  say(val);
+}
+
+// ══ INSTRUCTOR ══
+function showInstModal(){
+  document.getElementById('inst-modal').classList.add('show');
+  document.getElementById('inst-pw-input').value='';
+  document.getElementById('inst-pw-err').style.display='none';
+  setTimeout(function(){ document.getElementById('inst-pw-input').focus(); }, 100);
+}
+function hideInstModal(){ document.getElementById('inst-modal').classList.remove('show'); }
+function instLogin(){
+  var pw = document.getElementById('inst-pw-input').value;
+  if(pw === INSTRUCTOR_PASSWORD){
+    hideInstModal();
+    document.getElementById('tab-instructor').style.display='';
+    document.getElementById('inst-logout-btn').style.display='';
+    document.getElementById('inst-lock-btn').style.display='none';
+    showPage('instructor');
+  } else {
+    document.getElementById('inst-pw-err').style.display='block';
+    document.getElementById('inst-pw-input').value='';
+  }
+}
+function instLogout(){
+  document.getElementById('tab-instructor').style.display='none';
+  document.getElementById('inst-logout-btn').style.display='none';
+  document.getElementById('inst-lock-btn').style.display='';
+  showPage('home');
+}
+function saveNewPassword(){
+  var cur=document.getElementById('pw-current').value, nw=document.getElementById('pw-new').value, con=document.getElementById('pw-confirm').value;
+  var msg=document.getElementById('pw-msg');
+  if(cur!==INSTRUCTOR_PASSWORD){ msg.style.display='block'; msg.style.color='#C0392B'; msg.textContent='⚠️ Incorrect current password.'; return; }
+  if(nw.length<6){ msg.style.display='block'; msg.style.color='#C0392B'; msg.textContent='⚠️ Min. 6 characters.'; return; }
+  if(nw!==con){ msg.style.display='block'; msg.style.color='#C0392B'; msg.textContent='⚠️ Passwords do not match.'; return; }
+  INSTRUCTOR_PASSWORD = nw;
+  localStorage.setItem('lng_inst_pw', nw);
+  ['pw-current','pw-new','pw-confirm'].forEach(function(id){ document.getElementById(id).value=''; });
+  msg.style.display='block'; msg.style.color='#1A7A4A'; msg.textContent='✅ Password updated!';
+  setTimeout(function(){ msg.style.display='none'; document.getElementById('pw-panel').style.display='none'; }, 2000);
+}
+
+// ══ INIT ══
+window.onload = function(){
+  var selLang = 'Spanish';
+
+  ['Spanish','French','English'].forEach(function(l){
+    document.getElementById('lb-'+l).onclick = function(){
+      selLang = l;
+      document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.remove('on'); });
+      this.classList.add('on');
+    };
+  });
+
+  document.getElementById('btn-start').onclick = function(){
+    var n = document.getElementById('inp-name').value.trim();
+    if(!n){ document.getElementById('inp-name').focus(); return; }
+    studentName = n; lang = selLang; level = document.getElementById('inp-level').value;
+    document.getElementById('welcome').style.display='none';
+    document.getElementById('app').style.display='block';
+    var gr={Spanish:'¡Hola, ',French:'Bonjour, ',English:'Hello, '};
+    document.getElementById('app-greeting').textContent = (gr[lang]||'Hello, ')+studentName+'! 👋';
+    document.getElementById('lr-lang').textContent = LANG_FLAG[lang]+' '+lang;
+    document.getElementById('lr-level').value = level;
+    currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();
+    document.getElementById('mc-roleplay').classList.add('open');
+    var s = new SpeechSynthesisUtterance(' '); s.volume=0; synth.speak(s);
+  };
+  document.getElementById('inp-name').onkeydown = function(e){ if(e.key==='Enter') document.getElementById('btn-start').click(); };
+
+  document.getElementById('tab-student').onclick = function(){ showPage('home'); };
+  document.getElementById('change-lang-btn').onclick = function(){
+    if(!confirm('Change language? Current session ends.')) return;
+    synth.cancel();
+    document.getElementById('app').style.display='none';
+    document.getElementById('welcome').style.display='flex';
+    document.getElementById('inp-name').value = studentName;
+  };
+  document.getElementById('lr-level').onchange = function(){ level=this.value; };
+
+  ['roleplay','debate','story'].forEach(function(id){
+    document.getElementById('mh-'+id).onclick = function(){
+      var card = document.getElementById('mc-'+id);
+      var isOpen = card.classList.contains('open');
+      document.querySelectorAll('.mode-card').forEach(function(c){ c.classList.remove('open'); });
+      if(!isOpen) card.classList.add('open');
+    };
+  });
+
+  document.getElementById('mh-pronun').onclick = function(){
+    var body = document.getElementById('mc-pronun-body');
+    var arrow = this.querySelector('.mode-arrow');
+    var isOpen = body.style.display === 'block';
+    body.style.display = isOpen?'none':'block';
+    arrow.style.transform = isOpen?'':'rotate(90deg)';
+  };
+
+  function setupChips(containerId){
+    document.querySelectorAll('#'+containerId+' .tc').forEach(function(chip){
+      chip.onclick = function(){
+        document.querySelectorAll('#'+containerId+' .tc').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+      };
+    });
+  }
+  setupChips('rp-chips'); setupChips('db-chips'); setupChips('st-chips');
+
+  document.getElementById('rp-start').onclick = function(){
+    var custom = document.getElementById('rp-custom').value.trim();
+    var active = document.querySelector('#rp-chips .tc.active');
+    if(custom){ scenarioKey='custom_'+custom; scenarioLabel=custom; SCENARIO_DESC[scenarioKey]={es:custom,fr:custom,en:custom}; }
+    else { scenarioKey = active ? active.dataset.scenario : 'doctor'; scenarioLabel = active ? active.dataset.label : 'Doctor Visit'; }
+    launchMode('roleplay');
+  };
+
+  ['for','against','surprise'].forEach(function(s){
+    document.getElementById('side-'+s).onclick = function(){
+      document.querySelectorAll('.side-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      debateSide = s==='for'?'For':s==='against'?'Against':'Surprise';
+    };
+  });
+  document.getElementById('db-start').onclick = function(){
+    var custom = document.getElementById('db-custom').value.trim();
+    var active = document.querySelector('#db-chips .tc.active');
+    debateTopic = custom || (active ? active.dataset.topic : 'Social media does more harm than good');
+    launchMode('debate');
+  };
+
+  document.getElementById('st-start').onclick = function(){
+    var custom = document.getElementById('st-custom').value.trim();
+    var active = document.querySelector('#st-chips .tc.active');
+    storyPrompt = custom ? ('Tell me about: ' + custom) : (active ? active.dataset.prompt : 'Tell me about a memorable trip.');
+    launchMode('story');
+  };
+
+  document.getElementById('btn-listen-word').onclick = listenWord;
+  document.getElementById('btn-next-word').onclick = nextWord;
+  document.getElementById('btn-cat-prev').onclick = prevCat;
+  document.getElementById('btn-cat-next').onclick = nextCat;
+  document.getElementById('btn-record-word').onclick = function(){
+    var w = getCurrentWord();
+    startPronunRecording(w.w, 'listen-feedback','score-fill','score-num','pronun-tip','btn-record-word');
+  };
+
+  document.getElementById('ptab-listen').onclick = function(){
+    document.querySelectorAll('.ptab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.ptab-content').forEach(function(c){ c.classList.remove('active'); });
+    this.classList.add('active'); document.getElementById('pt-listen').classList.add('active');
+  };
+  document.getElementById('ptab-lookup').onclick = function(){
+    document.querySelectorAll('.ptab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.ptab-content').forEach(function(c){ c.classList.remove('active'); });
+    this.classList.add('active'); document.getElementById('pt-lookup').classList.add('active');
+  };
+  document.getElementById('lookup-go').onclick = doLookup;
+  document.getElementById('lookup-inp').onkeydown = function(e){ if(e.key==='Enter') doLookup(); };
+  ['slow','normal','fast'].forEach(function(s){
+    document.getElementById('sp-'+s).onclick = function(){
+      document.querySelectorAll('.speed-btn').forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+      if(currentLookupWord) say(currentLookupWord);
+    };
+  });
+  document.getElementById('lookup-record').onclick = function(){
+    startPronunRecording(currentLookupWord, 'lookup-feedback','lookup-score-fill','lookup-score-num','lookup-tip','lookup-record');
+  };
+
+  document.getElementById('btn-back').onclick = function(){
+    synth.cancel();
+    if(recog){ listening=false; recOn=false; setMicUI(false); }
+    showPage('home');
+  };
+  document.getElementById('btn-end').onclick = endSession;
+  document.getElementById('btn-send').onclick = function(){ sendText(document.getElementById('chat-inp').value.trim()); };
+  document.getElementById('chat-inp').onkeydown = function(e){ if(e.key==='Enter') sendText(this.value.trim()); };
+  document.getElementById('btn-mic').onclick = toggleMic;
+
+  document.getElementById('inst-lock-btn').onclick = showInstModal;
+  document.getElementById('inst-logout-btn').onclick = instLogout;
+  document.getElementById('inst-pw-btn').onclick = instLogin;
+  document.getElementById('inst-modal-cancel').onclick = hideInstModal;
+  document.getElementById('inst-pw-input').onkeydown = function(e){ if(e.key==='Enter') instLogin(); };
+  document.getElementById('inst-modal').onclick = function(e){ if(e.target===this) hideInstModal(); };
+  document.getElementById('btn-student-view').onclick = function(){ showPage('home'); };
+  document.getElementById('btn-toggle-pw').onclick = function(){
+    var p = document.getElementById('pw-panel');
+    p.style.display = (p.style.display==='block') ? 'none' : 'block';
+  };
+  document.getElementById('btn-save-pw').onclick = saveNewPassword;
+};
+</script>
+</body>
+</html>

@@ -772,7 +772,8 @@ function buildSystemPrompt(){
     'The student, ' + studentName + ', is at ACTFL level: ' + level + '. ' + (levelGuidance[level]||'') + ' ' +
     modeInstruction[mode] + ' ' + scenarioContext + ' ' +
     'CRITICAL: Respond logically and specifically to what the student actually said. Never repeat a question they already answered. Never ignore their answer. ' +
-    'Keep responses to 1-3 short sentences — this is a spoken conversation. ' +
+    'ALWAYS complete your sentences fully — never cut off mid-sentence. Write complete thoughts only. ' +
+    'Keep responses to 2-3 complete sentences — this is a spoken conversation. ' +
     'Occasionally (not every turn — about 1 in 3 responses), after your main response, add a brief pedagogical note prefixed with exactly "||NOTE||" followed by a short tip in ' + lang + ' about grammar, vocabulary, or pronunciation based on what the student said. If you have no note this turn, do not include "||NOTE||" at all.';
 }
 

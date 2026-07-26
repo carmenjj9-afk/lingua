@@ -890,46 +890,74 @@ function sendText(txt){
 
 // ══ LAUNCH CONVERSATION ══
 function launchMode(m){
-  mode = m;
-  level = document.getElementById('lr-level').value;
-  chat = [];
-  document.getElementById('chatbox').innerHTML = '';
-  document.getElementById('fb').style.display = 'none';
-  document.getElementById('notice').style.display = 'none';
-  lockedVoice = null;
-  pickVoice();
-  document.getElementById('chat-inp').placeholder = 'Type or speak in '+lang+'…';
+  try {
+    mode = m;
+    level = document.getElementById('lr-level').value;
+    chat = [];
+    document.getElementById('chatbox').innerHTML = '';
+    document.getElementById('fb').style.display = 'none';
+    document.getElementById('notice').style.display = 'none';
+    // Show typing hint on iOS where mic may not work
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if(isIOS){
+      var n = document.getElementById('notice');
+      n.textContent = '📱 On iPhone/iPad: type your responses below and press Enter. Luna will speak her replies.';
+      n.style.display = 'block';
+      n.style.background = '#E8EEF8';
+      n.style.borderColor = '#4A72B0';
+      n.style.color = '#1B3A6B';
+    }
+    lockedVoice = null;
+    pickVoice();
+    document.getElementById('chat-inp').placeholder = 'Type or speak in '+lang+'…';
 
-  var titles = {roleplay:'🎭 Role-Play: '+scenarioLabel, debate:'🗣️ Debate: '+debateTopic, story:'📖 Storytelling'};
-  document.getElementById('conv-title').textContent = titles[m] || m;
-  document.getElementById('conv-sub').textContent = 'Practicing '+lang+' · '+level+' · '+studentName;
-  document.getElementById('badge-lang').textContent = LANG_FLAG[lang]+' '+lang;
-  document.getElementById('badge-level').textContent = level;
+    var titles = {roleplay:'🎭 Role-Play: '+scenarioLabel, debate:'🗣️ Debate: '+debateTopic, story:'📖 Storytelling'};
+    document.getElementById('conv-title').textContent = titles[m] || m;
+    document.getElementById('conv-sub').textContent = 'Practicing '+lang+' · '+level+' · '+studentName;
+    document.getElementById('badge-lang').textContent = LANG_FLAG[lang]+' '+lang;
+    document.getElementById('badge-level').textContent = level;
 
-  showPage('conv');
+    showPage('conv');
 
-  if(!recog) initMic();
+    // Init mic only if supported — non-blocking so iOS doesn't freeze
+    try {
+      if(!recog && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        initMic();
+      }
+    } catch(micErr) {
+      console.log('Mic not available:', micErr);
+    }
 
-  setTimeout(function(){
-    addThinking();
-    // Send a "Begin" message to get the opener from Gemini
-    callGemini('Begin. Greet the student and start the activity.').then(function(fullText){
-      removeThinking();
-      var parts = fullText.split('||NOTE||');
-      var sayText = parts[0].trim();
-      chat.push({role:'user',content:'Begin.'});
-      chat.push({role:'assistant',content:sayText});
-      addMsg('ai', sayText, true);
-    }).catch(function(err){
-      removeThinking();
-      console.error('Opener error:', err);
-      var fb = {Spanish:'¡Hola! Soy '+TUTOR.Spanish+'. ¿Listo para empezar?', French:'Bonjour! Je suis '+TUTOR.French+'. Prêt?', English:'Hello! I am '+TUTOR.English+'. Ready to start?'};
-      var t = fb[lang] || fb.English;
-      chat.push({role:'user',content:'Begin.'});
-      chat.push({role:'assistant',content:t});
-      addMsg('ai', t, true);
-    });
-  }, 300);
+    // Start conversation after short delay
+    setTimeout(function(){
+      addThinking();
+      callGemini('Please begin the activity now. Greet the student warmly and start.')
+        .then(function(fullText){
+          removeThinking();
+          var parts = fullText.split('||NOTE||');
+          var sayText = parts[0].trim();
+          chat.push({role:'user', content:'Begin.'});
+          chat.push({role:'assistant', content:sayText});
+          addMsg('ai', sayText, true);
+        }).catch(function(err){
+          removeThinking();
+          console.error('Opener error:', err);
+          var fb = {
+            Spanish:'¡Hola! Soy '+TUTOR.Spanish+'. ¿Listos para empezar?',
+            French:'Bonjour! Je suis '+TUTOR.French+'. Prêt?',
+            English:'Hello! I am '+TUTOR.English+'. Ready to start?'
+          };
+          var t = fb[lang] || fb.English;
+          chat.push({role:'user', content:'Begin.'});
+          chat.push({role:'assistant', content:t});
+          addMsg('ai', t, true);
+        });
+    }, 300);
+
+  } catch(err) {
+    console.error('launchMode error:', err);
+    alert('Error starting activity: ' + err.message);
+  }
 }
 
 function showPage(name){

@@ -976,7 +976,31 @@ function endSession(){
   addThinking();
   var fbLangMap = {Spanish:'español latinoamericano', French:'français', English:'English'};
   var fbLangName = fbLangMap[lang] || 'español';
-  var fbPrompt = 'Analyze this language learning conversation and respond with ONLY a valid JSON object. No markdown. No explanation. Just JSON. Required keys: grammar_score (integer 0-100), grammar_note (string in ' + fbLangName + '), vocab_score (integer 0-100), vocab_note (string in ' + fbLangName + '), fluency_score (integer 0-100), fluency_note (string in ' + fbLangName + '), pronunciation_score (integer 0-100), pronunciation_note (string in ' + fbLangName + '), encouragement (string in ' + fbLangName + ' — exactly 2 warm sentences addressing ' + studentName + ' by name and mentioning something specific they said well). ALL strings must be in ' + fbLangName + '. Example encouragement in Spanish: "¡Muy bien, Carmen! Tu uso del vocabulario médico fue excelente hoy."';
+
+  // Collect student messages for personalized analysis
+  var studentMsgs = chat
+    .filter(function(m){
+      return m.role === 'user' &&
+        m.content !== 'Begin.' &&
+        m.content.indexOf('Please begin') === -1;
+    })
+    .map(function(m){ return m.content; })
+    .join(' | ');
+
+  var fbPrompt = 'You are analyzing a language learning conversation. ' +
+    'Student name: ' + studentName + '. ACTFL level: ' + level + '. Language: ' + fbLangName + '. ' +
+    'Student actual messages: ' + studentMsgs + '. ' +
+    'Give SPECIFIC feedback based on these exact messages. ' +
+    'Respond with ONLY valid JSON — no markdown, no extra text. ' +
+    'Keys: grammar_score (0-100), ' +
+    'grammar_note (in ' + fbLangName + ' — cite a specific phrase the student used), ' +
+    'vocab_score (0-100), ' +
+    'vocab_note (in ' + fbLangName + ' — mention specific words they used and suggest 2 new related words), ' +
+    'fluency_score (0-100), ' +
+    'fluency_note (in ' + fbLangName + ' — comment on their sentence length and flow), ' +
+    'pronunciation_score (0-100), ' +
+    'pronunciation_note (in ' + fbLangName + ' — give one specific pronunciation tip), ' +
+    'encouragement (in ' + fbLangName + ' — 2 sentences: first mention something specific ' + studentName + ' said well, then encourage them).';
 
   var contents = chat.filter(function(m){ return m.content !== 'Begin.'; }).map(function(m){
     return { role: m.role === 'user' ? 'user' : 'model', parts: [{text: m.content}] };

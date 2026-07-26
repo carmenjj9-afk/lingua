@@ -798,7 +798,7 @@ async function callGemini(userMessage){
     body: JSON.stringify({
       system_instruction: {parts:[{text: systemPrompt}]},
       contents: contents,
-      generationConfig: {maxOutputTokens: 220, temperature: 0.9}
+      generationConfig: {maxOutputTokens: 500, temperature: 0.9}
     })
   });
   var data = await resp.json();

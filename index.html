@@ -771,10 +771,12 @@ function buildSystemPrompt(){
     langInstruction[lang] + ' ' +
     'The student, ' + studentName + ', is at ACTFL level: ' + level + '. ' + (levelGuidance[level]||'') + ' ' +
     modeInstruction[mode] + ' ' + scenarioContext + ' ' +
-    'CRITICAL: Respond logically and specifically to what the student actually said. Never repeat a question they already answered. Never ignore their answer. ' +
-    'ALWAYS complete your sentences fully — never cut off mid-sentence. Write complete thoughts only. ' +
-    'Keep responses to 2-3 complete sentences — this is a spoken conversation. ' +
-    'Very occasionally (about 1 in 5 responses maximum), after your main response, add ONE brief pedagogical note prefixed with exactly "||NOTE||" — a short tip in ' + lang + ' about grammar or vocabulary. The note must be a complete sentence. If you have no note this turn, do not include "||NOTE||" at all. Never add a note that is incomplete.';
+    'CRITICAL RULES: ' +
+    '1. Always respond logically to what the student actually said. Never ignore their answer. ' +
+    '2. Always write COMPLETE sentences. Never cut off mid-sentence under any circumstances. ' +
+    '3. Keep responses to 2-3 complete sentences maximum. ' +
+    '4. Do NOT add any pedagogical notes or teaching comments during the conversation. Stay in character only. ' +
+    '5. Do NOT use the ||NOTE|| separator at all during conversation turns.';
 }
 
 async function callGemini(userMessage){
@@ -863,7 +865,8 @@ function sendText(txt){
     if(!sayText) sayText = '...';
     chat.push({role:'assistant', content: sayText});
     addMsg('ai', sayText, true);
-    if(noteText) setTimeout(function(){ addNote(noteText); }, 500);
+    // Notes removed from conversation — only show in feedback
+    // if(noteText) setTimeout(function(){ addNote(noteText); }, 500);
     setTimeout(function(){
       if(recog){
         recOn = true; listening = true;
@@ -943,8 +946,9 @@ function endSession(){
   if(recog){ listening=false; recOn=false; setMicUI(false); }
 
   addThinking();
-  var fbLang = {Spanish:'Spanish (Latin American)', French:'French', English:'English'};
-  var fbPrompt = 'Based on this entire conversation, provide session feedback as a JSON object only — no markdown, no extra text, just the JSON. Use these exact keys: grammar_score (number 0-100), grammar_note (string), vocab_score (number 0-100), vocab_note (string), fluency_score (number 0-100), fluency_note (string), pronunciation_score (number 0-100), pronunciation_note (string), encouragement (string — 2 warm complete sentences addressing ' + studentName + ' by name, praising specific things they did well). IMPORTANT: Write ALL text values in ' + (fbLang[lang]||lang) + '. Do not use English unless the language is English.';
+  var fbLangMap = {Spanish:'español latinoamericano', French:'français', English:'English'};
+  var fbLangName = fbLangMap[lang] || 'español';
+  var fbPrompt = 'Analyze this language learning conversation and respond with ONLY a valid JSON object. No markdown. No explanation. Just JSON. Required keys: grammar_score (integer 0-100), grammar_note (string in ' + fbLangName + '), vocab_score (integer 0-100), vocab_note (string in ' + fbLangName + '), fluency_score (integer 0-100), fluency_note (string in ' + fbLangName + '), pronunciation_score (integer 0-100), pronunciation_note (string in ' + fbLangName + '), encouragement (string in ' + fbLangName + ' — exactly 2 warm sentences addressing ' + studentName + ' by name and mentioning something specific they said well). ALL strings must be in ' + fbLangName + '. Example encouragement in Spanish: "¡Muy bien, Carmen! Tu uso del vocabulario médico fue excelente hoy."';
 
   var contents = chat.filter(function(m){ return m.content !== 'Begin.'; }).map(function(m){
     return { role: m.role === 'user' ? 'user' : 'model', parts: [{text: m.content}] };

@@ -590,25 +590,38 @@ function pickVoice(){
   if(!voices.length) loadV();
   var code = LANG_CODE[lang] || 'es-US';
   var l = code.split('-')[0];
-  var candidates = voices.filter(function(v){ return v.lang === code || v.lang.startsWith(l); });
-  if(!candidates.length) candidates = voices;
+  var all = voices.filter(function(v){ return v.lang.startsWith(l); });
+  if(!all.length) all = voices;
+
   var preferFemale = (lang !== 'French');
-  var femaleNames = ['female','woman','zira','sabina','paulina','monica','mónica','rosa','helena','lucia','lucía','sofia','sofía','karen','samantha','victoria','elvira','laura','maria','maría','carmen','isabela','isabella','valentina','camila','dalia','raquel','marina','catalina','salome','salomé','angelica','angélica','esperanza'];
-  var maleNames = ['male','man','david','mark','richard','thomas','henri','paul','jorge','diego','carlos','miguel','pablo','pedro','juan','antoine','daniel','fernando','enrique','raul','raúl'];
-  var keywords = preferFemale ? femaleNames : maleNames;
-  var oppositeKeywords = preferFemale ? maleNames : femaleNames;
-  var match = candidates.find(function(v){
+
+  // Known female voice names
+  var femaleKeys = ['sabina','helena','elvira','paulina','monica','rosa','sofia','laura',
+    'carmen','maria','zira','samantha','victoria','karen','natasha','google us english female',
+    'google espanol','microsoft sabina','microsoft helena'];
+  // Known male voice names  
+  var maleKeys = ['david','mark','jorge','pablo','carlos','miguel','henri','thomas',
+    'microsoft david','microsoft mark','microsoft jorge'];
+
+  var searchKeys = preferFemale ? femaleKeys : maleKeys;
+  var avoidKeys  = preferFemale ? maleKeys : femaleKeys;
+
+  // Try to find a matching voice
+  var match = all.find(function(v){
     var n = v.name.toLowerCase();
-    return keywords.some(function(k){ return n.indexOf(k) >= 0; });
+    return searchKeys.some(function(k){ return n.indexOf(k) >= 0; });
   });
+
+  // If not found, avoid opposite gender
   if(!match){
-    var filtered = candidates.filter(function(v){
+    match = all.find(function(v){
       var n = v.name.toLowerCase();
-      return !oppositeKeywords.some(function(k){ return n.indexOf(k) >= 0; });
+      return !avoidKeys.some(function(k){ return n.indexOf(k) >= 0; });
     });
-    match = filtered[0] || candidates[0];
   }
-  lockedVoice = match || candidates[0] || null;
+
+  lockedVoice = match || all[0] || null;
+  console.log('Voice selected for ' + lang + ':', lockedVoice ? lockedVoice.name : 'default');
 }
 
 function say(txt, cb){
@@ -771,7 +784,13 @@ async function callGemini(userMessage){
     if(m.content === 'Begin.') continue;
     contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{text: m.content}] });
   }
-  if(userMessage){ contents.push({role:'user', parts:[{text:userMessage}]}); }
+  // Always ensure there is at least one user message
+  if(userMessage){
+    contents.push({role:'user', parts:[{text:userMessage}]});
+  } else if(contents.length === 0){
+    // Opener — send a start message
+    contents.push({role:'user', parts:[{text:'Please begin the activity now. Greet the student warmly and start.'}]});
+  }
 
   var resp = await fetch(WORKER_URL, {
     method: 'POST',
@@ -889,7 +908,8 @@ function launchMode(m){
 
   setTimeout(function(){
     addThinking();
-    callGemini(null).then(function(fullText){
+    // Send a "Begin" message to get the opener from Gemini
+    callGemini('Begin. Greet the student and start the activity.').then(function(fullText){
       removeThinking();
       var parts = fullText.split('||NOTE||');
       var sayText = parts[0].trim();

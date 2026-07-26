@@ -774,7 +774,7 @@ function buildSystemPrompt(){
     'CRITICAL: Respond logically and specifically to what the student actually said. Never repeat a question they already answered. Never ignore their answer. ' +
     'ALWAYS complete your sentences fully — never cut off mid-sentence. Write complete thoughts only. ' +
     'Keep responses to 2-3 complete sentences — this is a spoken conversation. ' +
-    'Occasionally (not every turn — about 1 in 3 responses), after your main response, add a brief pedagogical note prefixed with exactly "||NOTE||" followed by a short tip in ' + lang + ' about grammar, vocabulary, or pronunciation based on what the student said. If you have no note this turn, do not include "||NOTE||" at all.';
+    'Very occasionally (about 1 in 5 responses maximum), after your main response, add ONE brief pedagogical note prefixed with exactly "||NOTE||" — a short tip in ' + lang + ' about grammar or vocabulary. The note must be a complete sentence. If you have no note this turn, do not include "||NOTE||" at all. Never add a note that is incomplete.';
 }
 
 async function callGemini(userMessage){
@@ -943,7 +943,8 @@ function endSession(){
   if(recog){ listening=false; recOn=false; setMicUI(false); }
 
   addThinking();
-  var fbPrompt = 'Based on this entire conversation, provide session feedback as a JSON object only (no markdown), with keys: grammar_score (0-100), grammar_note, vocab_score (0-100), vocab_note, fluency_score (0-100), fluency_note, pronunciation_score (0-100), pronunciation_note, encouragement (2 warm sentences addressing ' + studentName + ' by name). All text in ' + lang + '.';
+  var fbLang = {Spanish:'Spanish (Latin American)', French:'French', English:'English'};
+  var fbPrompt = 'Based on this entire conversation, provide session feedback as a JSON object only — no markdown, no extra text, just the JSON. Use these exact keys: grammar_score (number 0-100), grammar_note (string), vocab_score (number 0-100), vocab_note (string), fluency_score (number 0-100), fluency_note (string), pronunciation_score (number 0-100), pronunciation_note (string), encouragement (string — 2 warm complete sentences addressing ' + studentName + ' by name, praising specific things they did well). IMPORTANT: Write ALL text values in ' + (fbLang[lang]||lang) + '. Do not use English unless the language is English.';
 
   var contents = chat.filter(function(m){ return m.content !== 'Begin.'; }).map(function(m){
     return { role: m.role === 'user' ? 'user' : 'model', parts: [{text: m.content}] };
@@ -967,13 +968,30 @@ function endSession(){
     }).catch(function(err){
       removeThinking();
       console.error('Feedback error:', err);
-      var fbDefault = {
-        grammar_score:75, grammar_note:'Good effort overall!',
-        vocab_score:72, vocab_note:'Nice vocabulary range.',
-        fluency_score:78, fluency_note:'Natural pace.',
-        pronunciation_score:74, pronunciation_note:'Clear pronunciation.',
-        encouragement:'Great job today, ' + studentName + '! Keep practicing!'
+      var fbDefaults = {
+        Spanish: {
+          grammar_score:75, grammar_note:'¡Buen esfuerzo! Sigue practicando los tiempos verbales.',
+          vocab_score:72, vocab_note:'Buen vocabulario. Intenta añadir más conectores como "además" y "sin embargo".',
+          fluency_score:78, fluency_note:'Tu ritmo es natural. ¡Sigue así!',
+          pronunciation_score:74, pronunciation_note:'Tu pronunciación es clara. Sigue practicando.',
+          encouragement:'¡Excelente sesión hoy, ' + studentName + '! Tu español está mejorando mucho. ¡Sigue practicando!'
+        },
+        French: {
+          grammar_score:75, grammar_note:'Bon effort! Continuez à pratiquer les temps verbaux.',
+          vocab_score:72, vocab_note:'Bon vocabulaire. Essayez d'ajouter des connecteurs.',
+          fluency_score:78, fluency_note:'Votre rythme est naturel. Continuez!',
+          pronunciation_score:74, pronunciation_note:'Votre prononciation est claire.',
+          encouragement:'Excellente session aujourd'hui, ' + studentName + '! Votre français s'améliore. Continuez!'
+        },
+        English: {
+          grammar_score:75, grammar_note:'Good effort! Keep practicing verb tenses.',
+          vocab_score:72, vocab_note:'Nice vocabulary range. Try adding more connectors.',
+          fluency_score:78, fluency_note:'Your pace is natural. Keep it up!',
+          pronunciation_score:74, pronunciation_note:'Your pronunciation is clear.',
+          encouragement:'Excellent session today, ' + studentName + '! Your English is improving. Keep practicing!'
+        }
       };
+      var fbDefault = fbDefaults[lang] || fbDefaults.English;
       showFeedback(fbDefault);
     });
 }

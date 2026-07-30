@@ -243,6 +243,9 @@ input:focus, select:focus { border-color: #1B3A6B; }
       <option>Intermediate Low</option><option selected>Intermediate Mid</option><option>Intermediate High</option>
       <option>Advanced Low</option><option>Advanced Mid</option><option>Advanced High</option><option>Superior</option>
     </select>
+    <label>Instructor code</label>
+    <input id="inp-instructor" type="text" placeholder="Enter your instructor code (e.g. UTC-1234)" style="text-transform:uppercase">
+    <div id="inst-check" style="font-size:11px;font-weight:700;padding-left:16px;margin-top:-10px;margin-bottom:10px;display:none"></div>
     <button class="go" id="btn-start">Start Practicing →</button>
   </div>
 </div>
@@ -549,6 +552,10 @@ input:focus, select:focus { border-color: #1B3A6B; }
 
 // ══ CONFIG ══
 var WORKER_URL = 'https://lingua-proxy.carmenjj9.workers.dev';
+
+var REGISTRY_URL = 'https://script.google.com/macros/s/AKfycby6ZaV0MYPxn6ZXyMzu_YxB34w4KSZ_C1I8fueAUZbk3pyrqlxjkDorjr3oKSc1ObJJ/exec';
+var selectedInstructor = null;
+var SHEETS_URL = '';
 var LANG_CODE = { Spanish:'es-US', French:'fr-FR', English:'en-US' };
 var LANG_FLAG = { Spanish:'🇪🇸', French:'🇫🇷', English:'🇺🇸' };
 var TUTOR     = { Spanish:'Luna', French:'Émile', English:'Sam' };
@@ -1052,6 +1059,36 @@ function endSession(){
     });
 }
 
+function sendToSheets(fb){
+  // Send feedback data to Google Sheets silently
+  var modeLabels = {roleplay:'Role-Play', debate:'Debate', story:'Storytelling'};
+  var payload = {
+    studentName: studentName,
+    lang: lang,
+    level: level,
+    mode: modeLabels[mode] || mode,
+    grammar_score: fb.grammar_score,
+    grammar_note: fb.grammar_note,
+    vocab_score: fb.vocab_score,
+    vocab_note: fb.vocab_note,
+    fluency_score: fb.fluency_score,
+    fluency_note: fb.fluency_note,
+    pronunciation_score: fb.pronunciation_score,
+    pronunciation_note: fb.pronunciation_note,
+    encouragement: fb.encouragement
+  };
+  fetch(SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(function(){
+    console.log('Data sent to Google Sheets successfully');
+  }).catch(function(err){
+    console.log('Sheets error (non-critical):', err);
+  });
+}
+
 function showFeedback(fb){
   var C = {g:'#1B3A6B', v:'#C89B1C', f:'#1A7A4A', p:'#C0392B'};
   document.getElementById('fb-grid').innerHTML =
@@ -1063,6 +1100,8 @@ function showFeedback(fb){
   document.getElementById('fb').style.display = 'block';
   say(fb.encouragement);
   document.getElementById('fb').scrollIntoView({behavior:'smooth'});
+  // Send data to Google Sheets
+  sendToSheets(fb);
 }
 function fi(lbl,sc,nt,col){
   return '<div class="fbi"><label>'+lbl+'</label>'+
@@ -1238,19 +1277,86 @@ window.onload = function(){
 
   document.getElementById('btn-start').onclick = function(){
     var n = document.getElementById('inp-name').value.trim();
-    if(!n){ document.getElementById('inp-name').focus(); return; }
+    if(!n){
+      var inp = document.getElementById('inp-name');
+      inp.focus();
+      inp.style.borderColor = '#C0392B';
+      inp.placeholder = 'Please enter your name first…';
+      setTimeout(function(){ inp.style.borderColor = ''; inp.placeholder = 'Enter your name…'; }, 2500);
+      return;
+    }
+    var instCode = document.getElementById('inp-instructor').value.trim().toUpperCase();
+    if(!instCode){
+      var instInp = document.getElementById('inp-instructor');
+      instInp.style.borderColor = '#C0392B';
+      setTimeout(function(){ instInp.style.borderColor = ''; }, 2500);
+      alert('Please enter your instructor code.');
+      return;
+    }
     studentName = n; lang = selLang; level = document.getElementById('inp-level').value;
-    document.getElementById('welcome').style.display='none';
-    document.getElementById('app').style.display='block';
-    var gr={Spanish:'¡Hola, ',French:'Bonjour, ',English:'Hello, '};
-    document.getElementById('app-greeting').textContent = (gr[lang]||'Hello, ')+studentName+'! 👋';
+    // Look up instructor code in registry
+    var chk = document.getElementById('inst-check');
+    chk.style.display = 'block';
+    chk.style.color = '#C89B1C';
+    chk.textContent = '⏳ Verifying instructor code…';
+    document.getElementById('btn-start').disabled = true;
+
+    fetch(REGISTRY_URL + '?code=' + instCode)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.status === 'success' && data.data){
+          selectedInstructor = data.data;
+          SHEETS_URL = data.data.sheetsUrl || '';
+          chk.style.color = '#1A7A4A';
+          chk.textContent = '✅ Instructor: ' + data.data.name;
+          setTimeout(function(){
+            document.getElementById('welcome').style.display='none';
+            document.getElementById('app').style.display='block';
+            var gr={Spanish:'¡Hola, ',French:'Bonjour, ',English:'Hello, '};
+            document.getElementById('app-greeting').textContent = (gr[lang]||'Hello, ')+studentName+'! 👋';
+            document.getElementById('app-sub').textContent = 'Ready to practice today? · ' + data.data.name;
+            document.getElementById('lr-level').value = level;
+            currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();
+            document.getElementById('mc-roleplay').classList.add('open');
+            try { var s=new SpeechSynthesisUtterance(' '); s.volume=0; synth.speak(s); } catch(e){}
+          }, 800);
+        } else {
+          chk.style.color = '#C0392B';
+          chk.textContent = '❌ Code not found. Please check your instructor code.';
+          document.getElementById('btn-start').disabled = false;
+        }
+      })
+      .catch(function(){
+        // If registry is unreachable, allow entry without verification
+        selectedInstructor = {name: 'Unknown', code: instCode};
+        SHEETS_URL = '';
+        document.getElementById('welcome').style.display='none';
+        document.getElementById('app').style.display='block';
+        var gr={Spanish:'¡Hola, ',French:'Bonjour, ',English:'Hello, '};
+        document.getElementById('app-greeting').textContent = (gr[lang]||'Hello, ')+studentName+'! 👋';
+        document.getElementById('app-sub').textContent = 'Ready to practice today?';
+        document.getElementById('lr-level').value = level;
+        currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();
+        document.getElementById('mc-roleplay').classList.add('open');
+        try { var s=new SpeechSynthesisUtterance(' '); s.volume=0; synth.speak(s); } catch(e){}
+      });
+    return; // wait for async lookup
     document.getElementById('lr-lang').textContent = LANG_FLAG[lang]+' '+lang;
     document.getElementById('lr-level').value = level;
     currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();
     document.getElementById('mc-roleplay').classList.add('open');
     var s = new SpeechSynthesisUtterance(' '); s.volume=0; synth.speak(s);
   };
-  document.getElementById('inp-name').onkeydown = function(e){ if(e.key==='Enter') document.getElementById('btn-start').click(); };
+  document.getElementById('inp-name').onkeydown = function(e){
+    if(e.key==='Enter'){
+      e.preventDefault();
+      document.getElementById('btn-start').click();
+    }
+  };
+  // Clear red border when user starts typing
+  document.getElementById('inp-name').oninput = function(){
+    this.style.borderColor = '';
+  };
 
   document.getElementById('tab-student').onclick = function(){ showPage('home'); };
   document.getElementById('change-lang-btn').onclick = function(){

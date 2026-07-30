@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,9 +90,20 @@ input:focus { border-color: #1B3A6B; }
 <script>
 var REGISTRY_URL = 'https://script.google.com/macros/s/AKfycby6ZaV0MYPxn6ZXyMzu_YxB34w4KSZ_C1I8fueAUZbk3pyrqlxjkDorjr3oKSc1ObJJ/exec';
 
+// Generate a consistent code from email (same email always gets same code)
+async function hashCode(str) {
+  var hash = 0;
+  for(var i=0; i<str.length; i++){
+    var c = str.charCodeAt(i);
+    hash = ((hash<<5)-hash)+c;
+    hash = hash & hash;
+  }
+  return Math.abs(hash) % 9000 + 1000;
+}
+
 async function register(){
   var name = document.getElementById('reg-name').value.trim();
-  var email = document.getElementById('reg-email').value.trim();
+  var email = document.getElementById('reg-email').value.trim().toLowerCase();
   var institution = document.getElementById('reg-institution').value.trim();
   var url = document.getElementById('reg-url').value.trim();
   var err = document.getElementById('reg-err');
@@ -112,33 +124,30 @@ async function register(){
   btn.disabled = true;
   btn.textContent = 'Registering…';
 
-  try {
-    var resp = await fetch(REGISTRY_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        action: 'register',
-        name: name,
-        email: email,
-        institution: institution,
-        sheetsUrl: url
-      })
-    });
+  // Generate deterministic code from email — same email always gets same code
+  var num = await hashCode(email);
+  var prefix = institution.toUpperCase().replace(/\s/g,'').substring(0,4);
+  var code = prefix + '-' + num;
 
-    // no-cors means we can't read response, but it worked
-    // Generate code locally as fallback display
-    var code = institution.toUpperCase().replace(/\s/g,'').substring(0,4) + '-' + Math.floor(1000+Math.random()*9000);
-    document.getElementById('code-display').textContent = code;
-    document.getElementById('form-section').style.display = 'none';
-    document.getElementById('success-section').style.display = 'block';
+  // Send to registry (fire and forget)
+  fetch(REGISTRY_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      action: 'register',
+      name: name,
+      email: email,
+      institution: institution,
+      sheetsUrl: url,
+      code: code
+    })
+  }).catch(function(){});
 
-  } catch(e) {
-    btn.disabled = false;
-    btn.textContent = 'Register →';
-    err.style.display = 'block';
-    err.textContent = 'Connection error. Please try again.';
-  }
+  // Show code immediately — no need to wait for server
+  document.getElementById('code-display').textContent = code;
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('success-section').style.display = 'block';
 }
 </script>
 </body>

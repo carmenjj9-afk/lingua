@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -556,6 +557,11 @@ var WORKER_URL = 'https://lingua-proxy.carmenjj9.workers.dev';
 var REGISTRY_URL = 'https://script.google.com/macros/s/AKfycby6ZaV0MYPxn6ZXyMzu_YxB34w4KSZ_C1I8fueAUZbk3pyrqlxjkDorjr3oKSc1ObJJ/exec';
 var selectedInstructor = null;
 var SHEETS_URL = '';
+
+// Known instructors as fallback (in case registry is slow)
+var KNOWN_INSTRUCTORS = {
+  'UTC-6969': { name: 'Carmen Jiménez', sheetsUrl: 'https://script.google.com/macros/s/AKfycbwNdmzO5fqLrIaH_vdpIdNNrVlKNqIVAUezFf-oYqt319qB2xnAeLC7w7QYoisvdmz_rQ/exec' }
+};
 var LANG_CODE = { Spanish:'es-US', French:'fr-FR', English:'en-US' };
 var LANG_FLAG = { Spanish:'🇪🇸', French:'🇫🇷', English:'🇺🇸' };
 var TUTOR     = { Spanish:'Luna', French:'Émile', English:'Sam' };
@@ -1301,46 +1307,47 @@ window.onload = function(){
     chk.textContent = '⏳ Verifying instructor code…';
     document.getElementById('btn-start').disabled = true;
 
-    fetch(REGISTRY_URL + '?code=' + instCode)
-      .then(function(r){ return r.json(); })
-      .then(function(data){
-        if(data.status === 'success' && data.data){
-          selectedInstructor = data.data;
-          SHEETS_URL = data.data.sheetsUrl || '';
-          chk.style.color = '#1A7A4A';
-          chk.textContent = '✅ Instructor: ' + data.data.name;
-          setTimeout(function(){
-            document.getElementById('welcome').style.display='none';
-            document.getElementById('app').style.display='block';
-            var gr={Spanish:'¡Hola, ',French:'Bonjour, ',English:'Hello, '};
-            document.getElementById('app-greeting').textContent = (gr[lang]||'Hello, ')+studentName+'! 👋';
-            document.getElementById('app-sub').textContent = 'Ready to practice today? · ' + data.data.name;
-            document.getElementById('lr-level').value = level;
-            currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();
-            document.getElementById('mc-roleplay').classList.add('open');
-            try { var s=new SpeechSynthesisUtterance(' '); s.volume=0; synth.speak(s); } catch(e){}
-          }, 800);
-        } else {
-          chk.style.color = '#C0392B';
-          chk.textContent = '❌ Code not found. Please check your instructor code.';
-          document.getElementById('btn-start').disabled = false;
-        }
-      })
-      .catch(function(){
-        // If registry is unreachable, allow entry without verification
-        selectedInstructor = {name: 'Unknown', code: instCode};
-        SHEETS_URL = '';
+    function launchApp(instrData){
+      selectedInstructor = instrData;
+      SHEETS_URL = instrData.sheetsUrl || '';
+      chk.style.color = '#1A7A4A';
+      chk.textContent = '✅ Instructor: ' + instrData.name;
+      setTimeout(function(){
         document.getElementById('welcome').style.display='none';
         document.getElementById('app').style.display='block';
         var gr={Spanish:'¡Hola, ',French:'Bonjour, ',English:'Hello, '};
         document.getElementById('app-greeting').textContent = (gr[lang]||'Hello, ')+studentName+'! 👋';
-        document.getElementById('app-sub').textContent = 'Ready to practice today?';
+        document.getElementById('app-sub').textContent = 'Ready to practice today? · ' + instrData.name;
         document.getElementById('lr-level').value = level;
         currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();
         document.getElementById('mc-roleplay').classList.add('open');
         try { var s=new SpeechSynthesisUtterance(' '); s.volume=0; synth.speak(s); } catch(e){}
+      }, 600);
+    }
+
+    // Check known instructors first (instant)
+    if(KNOWN_INSTRUCTORS[instCode]){
+      launchApp(KNOWN_INSTRUCTORS[instCode]);
+      return;
+    }
+
+    // Then check registry
+    fetch(REGISTRY_URL + '?code=' + instCode)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.status === 'success' && data.data){
+          launchApp(data.data);
+        } else {
+          chk.style.color = '#C0392B';
+          chk.textContent = '❌ Code not found. Please check with your instructor.';
+          document.getElementById('btn-start').disabled = false;
+        }
+      })
+      .catch(function(){
+        // Registry unreachable — allow with warning
+        launchApp({name: 'Instructor', code: instCode, sheetsUrl: ''});
       });
-    return; // wait for async lookup
+    return;
     document.getElementById('lr-lang').textContent = LANG_FLAG[lang]+' '+lang;
     document.getElementById('lr-level').value = level;
     currentCatIdx=0; currentWordIdx=0; updatePronunDisplay();

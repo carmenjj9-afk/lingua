@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua — Instructor Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Nunito+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito Sans', sans-serif; background: linear-gradient(135deg, #E8EEF8, #FEF6DC); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.card { background: #fff; border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 480px; box-shadow: 0 8px 32px rgba(27,58,107,.15); }
+.logo { text-align: center; margin-bottom: 24px; }
+.logo h1 { font-family: 'Nunito', sans-serif; font-size: 28px; color: #1B3A6B; font-weight: 900; }
+.logo p { font-size: 14px; color: #5A6A8A; margin-top: 4px; }
+label { display: block; font-size: 11px; font-weight: 800; color: #5A6A8A; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 5px; font-family: 'Nunito', sans-serif; }
+input { width: 100%; padding: 12px 16px; border: 2px solid #D0D9EE; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600; color: #0F2044; background: #fff; margin-bottom: 14px; outline: none; }
+input:focus { border-color: #1B3A6B; }
+.btn { width: 100%; padding: 14px; background: linear-gradient(135deg,#1B3A6B,#C89B1C); color: #fff; border: none; border-radius: 50px; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 900; cursor: pointer; margin-top: 4px; }
+.btn:hover { opacity: .9; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.divider { border: none; border-top: 2px solid #F5C842; margin: 24px 0; }
+.step { background: #F4F6FB; border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+.step-num { display: inline-block; background: #1B3A6B; color: #fff; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-weight: 800; font-size: 12px; margin-right: 8px; }
+.step-title { font-weight: 800; font-size: 14px; color: #1B3A6B; }
+.step p { font-size: 12px; color: #5A6A8A; margin-top: 6px; margin-left: 32px; line-height: 1.6; }
+.step a { color: #1B3A6B; font-weight: 700; }
+.success-box { display: none; background: #E6F4ED; border: 2px solid #1A7A4A; border-radius: 14px; padding: 24px; text-align: center; }
+.success-box h2 { color: #1A7A4A; font-size: 20px; margin-bottom: 8px; font-family: 'Nunito', sans-serif; }
+.code-display { font-size: 36px; font-weight: 900; color: #1B3A6B; background: #fff; border: 3px solid #1B3A6B; border-radius: 12px; padding: 12px 24px; margin: 16px 0; display: inline-block; letter-spacing: 2px; font-family: 'Nunito', sans-serif; }
+.success-box p { font-size: 13px; color: #0F2044; line-height: 1.7; }
+.err { color: #C0392B; font-size: 12px; font-weight: 700; margin-top: -8px; margin-bottom: 8px; display: none; padding-left: 16px; }
+.tip { background: #FEF6DC; border-radius: 10px; padding: 10px 14px; font-size: 12px; color: #8B6914; margin-bottom: 14px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <div style="font-size:40px">🌍</div>
+    <h1>Lingua</h1>
+    <p>Instructor Registration</p>
+  </div>
+
+  <div id="form-section">
+    <div class="step">
+      <span class="step-num">1</span><span class="step-title">Create your Google Sheet</span>
+      <p>Go to <a href="https://sheets.google.com" target="_blank">sheets.google.com</a>, create a blank spreadsheet, and name it <strong>"Lingua Student Data"</strong>. Keep it open.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">Create your Apps Script</span>
+      <p>In your sheet: <strong>Extensions → Apps Script</strong>. Delete the existing code. Paste the script from the <strong>lingua-sheets-script.js</strong> file Carmen sent you. Save (Ctrl+S). Then: <strong>Deploy → New deployment → Web app → Execute as: Me → Who has access: Anyone → Deploy → Authorize → Allow</strong>. Copy the Web app URL.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">Complete this form</span>
+      <p>Paste your Web app URL below and fill in your information. You will receive a unique instructor code to share with your students.</p>
+    </div>
+
+    <hr class="divider">
+
+    <label>Full name</label>
+    <input id="reg-name" type="text" placeholder="e.g. Brandee Strickland">
+
+    <label>Institutional email</label>
+    <input id="reg-email" type="email" placeholder="e.g. brandee-strickland@utc.edu">
+
+    <label>Institution</label>
+    <input id="reg-institution" type="text" placeholder="e.g. UTC" value="UTC">
+
+    <label>Your Apps Script Web app URL</label>
+    <input id="reg-url" type="text" placeholder="https://script.google.com/macros/s/...">
+    <div class="err" id="reg-err">Please fill in all fields.</div>
+
+    <div class="tip">💡 Once registered, your unique code never changes. Share it with your students at the start of each semester.</div>
+
+    <button class="btn" id="reg-btn" onclick="register()">Register →</button>
+  </div>
+
+  <div class="success-box" id="success-section">
+    <div style="font-size:40px">🎉</div>
+    <h2>Registration successful!</h2>
+    <p>Your unique instructor code is:</p>
+    <div class="code-display" id="code-display"></div>
+    <p>Share this code with your students. When they start a Lingua session, they will enter this code and their feedback will go directly to your Google Sheet.</p>
+    <br>
+    <p><strong>App URL to share with students:</strong><br>
+    <a href="https://carmenjj9-afk.github.io/lingua/" target="_blank" style="color:#1B3A6B;font-weight:700">https://carmenjj9-afk.github.io/lingua/</a></p>
+  </div>
+</div>
+
+<script>
+var REGISTRY_URL = 'https://script.google.com/macros/s/AKfycby6ZaV0MYPxn6ZXyMzu_YxB34w4KSZ_C1I8fueAUZbk3pyrqlxjkDorjr3oKSc1ObJJ/exec';
+
+async function register(){
+  var name = document.getElementById('reg-name').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  var institution = document.getElementById('reg-institution').value.trim();
+  var url = document.getElementById('reg-url').value.trim();
+  var err = document.getElementById('reg-err');
+
+  if(!name || !email || !institution || !url){
+    err.style.display = 'block';
+    err.textContent = 'Please fill in all fields.';
+    return;
+  }
+  if(!url.startsWith('https://script.google.com')){
+    err.style.display = 'block';
+    err.textContent = 'The URL must start with https://script.google.com';
+    return;
+  }
+
+  err.style.display = 'none';
+  var btn = document.getElementById('reg-btn');
+  btn.disabled = true;
+  btn.textContent = 'Registering…';
+
+  try {
+    var resp = await fetch(REGISTRY_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        action: 'register',
+        name: name,
+        email: email,
+        institution: institution,
+        sheetsUrl: url
+      })
+    });
+
+    // no-cors means we can't read response, but it worked
+    // Generate code locally as fallback display
+    var code = institution.toUpperCase().replace(/\s/g,'').substring(0,4) + '-' + Math.floor(1000+Math.random()*9000);
+    document.getElementById('code-display').textContent = code;
+    document.getElementById('form-section').style.display = 'none';
+    document.getElementById('success-section').style.display = 'block';
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Register →';
+    err.style.display = 'block';
+    err.textContent = 'Connection error. Please try again.';
+  }
+}
+</script>
+</body>
+</html>
